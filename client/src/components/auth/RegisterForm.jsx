@@ -14,8 +14,10 @@ import {
   FieldSet,
 } from "../ui/field";
 import { Input } from "../ui/input";
+import { useAuth } from "../../context/AuthContext";
 
 function RegisterForm() {
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
@@ -41,9 +43,9 @@ function RegisterForm() {
       console.log(data.message);
       return;
     }
-
-    console.log("User created:", data);
-
+    login(data);
+    console.log(data.token);
+    console.log("User Created:", data.user);
     reset();
   };
   const submitHandler = handleSubmit(onSubmit);

@@ -2,13 +2,7 @@ const ExpressError = require("../middleware/expressError");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const maxAge = 60 * 60 * 24;
-const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: maxAge,
-  });
-};
+const createToken = require("../utils/createToken");
 
 async function register(req, res, next) {
   try {
@@ -31,8 +25,10 @@ async function register(req, res, next) {
       email,
       password: hashedPassword,
     });
-    return res.status(200).json({
+    const token = createToken(newUser);
+    return res.status(201).json({
       user: newUser,
+      token,
     });
   } catch (err) {
     return next(err);
@@ -47,23 +43,31 @@ async function login(req, res, next) {
       throw new ExpressError("Email and password required", 400);
     }
     const existingUser = await User.findByEmail(email);
-    if (existingUser) {
-      const auth = await bcrypt.compare(password, existingUser.password);
-      if (!auth) {
-        throw new ExpressError("Incorrect Password. Try again", 400);
-      }
-      const token = createToken(existingUser.id);
-      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-      res.status(200).json({
-        user: existingUser.id,
-      });
+
+    if (!existingUser) {
+      throw new ExpressError("Invalid Email. Try again", 400);
     }
+
+    const auth = await bcrypt.compare(password, existingUser.password);
+    if (!auth) {
+      throw new ExpressError("Incorrect Password. Try again", 400);
+    }
+    const token = createToken(existingUser);
+    res.cookie("jwt", token, { httpOnly: true, maxAge: 259200000 });
+    res.status(200).json({
+      user: existingUser.id,
+      token,
+    });
   } catch (err) {
     next(err);
   }
 }
 
+async function editProfile(res, res, next) {
+  const { firstName, lastName, email, password } = req.body;
+}
 module.exports = {
   register,
   login,
+  editProfile,
 };
