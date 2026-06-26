@@ -14,7 +14,7 @@ function Register() {
 
         Have account? switcher
         */}
-      <p>This is where the form to register will go</p>
+      <p>This is where the link "Have account already?" will exist</p>
     </>
   );
 }

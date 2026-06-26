@@ -88,11 +88,19 @@ function RegisterForm() {
               <FieldLabel>Password</FieldLabel>
               <Input
                 type="password"
-                placeholder="At least 8 characters"
+                autoComplete="new-password"
                 {...register("password")}
               />
-              {errors.password && (
-                <FieldError>{errors.password.message}</FieldError>
+            </Field>
+            <Field>
+              <FieldLabel>Confirm Password</FieldLabel>
+              <Input
+                type="password"
+                autoComplete="new-password"
+                {...register("confirmPassword")}
+              />
+              {errors.confirmPassword && (
+                <FieldError>{errors.confirmPassword.message}</FieldError>
               )}
             </Field>
           </FieldGroup>

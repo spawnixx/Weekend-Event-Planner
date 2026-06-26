@@ -7,6 +7,7 @@ CREATE TABLE users (
     email VARCHAR(75) UNIQUE NOT NULL,
 
     password VARCHAR(255) NOT NULL
+    groups INTEGER[] DEFAULT '{}'
 );
 
 CREATE TABLE groups (

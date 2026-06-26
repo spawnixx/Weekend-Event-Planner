@@ -4,7 +4,7 @@ import Login from "../views/Login";
 import Register from "../views/Register";
 import Profile from "../views/Profile";
 import Dashboard from "../views/Dashboard";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../components/common/ProtectedRoute";
 function AppRoutes() {
   return (
     <Routes>

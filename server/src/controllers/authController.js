@@ -63,11 +63,19 @@ async function login(req, res, next) {
   }
 }
 
-async function editProfile(res, res, next) {
-  const { firstName, lastName, email, password } = req.body;
+async function updateProfile(req, res) {
+  const { firstName, lastName, email } = req.body;
+  const userId = req.user.id;
+  const updatedUser = await User.patch({
+    id: userId,
+    firstName,
+    lastName,
+    email,
+  });
+  res.json(updatedUser);
 }
 module.exports = {
   register,
   login,
-  editProfile,
+  updateProfile,
 };
