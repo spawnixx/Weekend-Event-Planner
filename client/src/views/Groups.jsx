@@ -1,7 +1,13 @@
-function Dashboard() {
+import CreateGroupModal from "../components/groups/CreateGroupModal";
+
+function Groups() {
   return (
-    <h1>Dashboard</h1>
+    <>
+      <h1>Groups</h1>
+      <CreateGroupModal />
+    </>
     /*
+
     <ProfileWidget />
     <CreateGroupButton />
     <JoinGroupButton />
@@ -15,4 +21,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Groups;

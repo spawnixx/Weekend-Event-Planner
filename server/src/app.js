@@ -4,7 +4,7 @@ const db = require("./db");
 const errorHandler = require("./middleware/errorHandler");
 
 const userRoutes = require("./routes/userRoutes");
-
+const groupRoutes = require("./routes/groupRoutes");
 const app = express();
 app.use(
   cors({
@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(errorHandler);
 
 app.use("/users", userRoutes);
+app.use("/groups", groupRoutes);
 
 app.get("/", async (req, res) => {
   const result = await db.query("Select NOW()");

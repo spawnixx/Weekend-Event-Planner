@@ -31,7 +31,7 @@ class User {
   static async findByEmail(email) {
     const result = await db.query(
       `
-      SELECT id, firstName, lastName, email 
+      SELECT id, firstName, lastName, email, password 
       FROM users
       WHERE email = $1
       `,

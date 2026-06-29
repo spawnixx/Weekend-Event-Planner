@@ -4,7 +4,6 @@ require("dotenv").config();
 const tokenAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    res.redirect("/login");
     return next(new ExpressError("No Token", 401));
   }
   const token = authHeader.split(" ")[1];

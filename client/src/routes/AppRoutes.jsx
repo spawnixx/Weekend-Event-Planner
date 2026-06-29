@@ -3,7 +3,7 @@ import Home from "../views/Home";
 import Login from "../views/Login";
 import Register from "../views/Register";
 import Profile from "../views/Profile";
-import Dashboard from "../views/Dashboard";
+import Groups from "../views/Groups";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 function AppRoutes() {
   return (
@@ -20,10 +20,10 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/dashboard"
+        path="/groups"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Groups />
           </ProtectedRoute>
         }
       />

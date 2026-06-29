@@ -8,13 +8,13 @@ async function register(req, res, next) {
   try {
     const { firstName, lastName, email, password } = req.body;
     if (!firstName || !lastName || !email || !password) {
-      throw new ExpressError("All fields are required", 400);
+      next(new ExpressError("All fields are required", 400));
     }
 
     const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
-      throw new ExpressError("Email already in use.", 400);
+      next(new ExpressError("Email already in use.", 400));
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -47,7 +47,7 @@ async function login(req, res, next) {
     if (!existingUser) {
       throw new ExpressError("Invalid Email. Try again", 400);
     }
-
+    console.log(existingUser);
     const auth = await bcrypt.compare(password, existingUser.password);
     if (!auth) {
       throw new ExpressError("Incorrect Password. Try again", 400);

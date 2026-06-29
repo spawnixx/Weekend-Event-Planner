@@ -30,7 +30,6 @@ function LoginForm() {
   const onSubmit = async (values) => {
     const res = await fetch("http://localhost:3001/users/login", {
       method: "POST",
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -75,7 +74,7 @@ function LoginForm() {
       </FieldGroup>
       <Field orientation="horizontal">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Submit"}
+          {isSubmitting ? "Logging in..." : "Submit"}
         </Button>
 
         <Button type="button" variant="outline" onClick={() => reset()}>
