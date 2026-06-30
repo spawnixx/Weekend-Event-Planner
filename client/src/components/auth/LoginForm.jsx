@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema } from "../../lib/loginSchema";
 
-import { Button } from "../ui/button";
+import { Button } from "@/ui/button";
 import {
   Field,
   FieldDescription,
