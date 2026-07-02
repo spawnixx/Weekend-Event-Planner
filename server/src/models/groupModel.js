@@ -1,6 +1,6 @@
-const db = require("../db");
+import { db } from "../db.js";
 
-class Group {
+export class Group {
   static async create({ name, ownerId, inviteCode }) {
     const res = await db.query(
       `
@@ -59,4 +59,3 @@ class Group {
     return `ID: ${userId} removed`;
   }
 }
-module.exports = Group;

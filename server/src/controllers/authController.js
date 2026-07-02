@@ -1,10 +1,10 @@
-const ExpressError = require("../middleware/expressError");
-const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const createToken = require("../utils/createToken");
+import { ExpressError } from "../middleware/expressError.js";
+import { User } from "../models/userModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { createToken } from "../utils/createToken.js";
 
-async function register(req, res, next) {
+export async function register(req, res, next) {
   try {
     const { firstName, lastName, email, password } = req.body;
     if (!firstName || !lastName || !email || !password) {
@@ -35,22 +35,22 @@ async function register(req, res, next) {
   }
 }
 
-async function login(req, res, next) {
+export async function login(req, res, next) {
   const { email, password } = req.body;
 
   try {
     if (!email || !password) {
-      throw new ExpressError("Email and password required", 400);
+      next(new ExpressError("Email and password required", 400));
     }
     const existingUser = await User.findByEmail(email);
 
     if (!existingUser) {
-      throw new ExpressError("Invalid Email. Try again", 400);
+      next(new ExpressError("Invalid Email. Try again", 400));
     }
     console.log(existingUser);
     const auth = await bcrypt.compare(password, existingUser.password);
     if (!auth) {
-      throw new ExpressError("Incorrect Password. Try again", 400);
+      next(ExpressError("Incorrect Password. Try again", 400));
     }
     const token = createToken(existingUser);
     res.cookie("jwt", token, { httpOnly: true, maxAge: 259200000 });
@@ -63,7 +63,7 @@ async function login(req, res, next) {
   }
 }
 
-async function updateProfile(req, res) {
+export async function updateProfile(req, res) {
   const { firstName, lastName, email } = req.body;
   const userId = req.user.id;
   const updatedUser = await User.patch({
@@ -74,8 +74,3 @@ async function updateProfile(req, res) {
   });
   res.json(updatedUser);
 }
-module.exports = {
-  register,
-  login,
-  updateProfile,
-};

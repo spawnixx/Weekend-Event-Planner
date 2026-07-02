@@ -1,6 +1,6 @@
-const db = require("../db");
+import { db } from "../db.js";
 
-class User {
+export class User {
   static async create({ firstName, lastName, email, password }) {
     const result = await db.query(
       `
@@ -52,5 +52,3 @@ class User {
     return result.rows[0];
   }
 }
-
-module.exports = User;

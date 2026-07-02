@@ -1,13 +1,15 @@
-const express = require("express");
-const router = new express.Router();
-const ExpressError = require("../middleware/expressError");
-const User = require("../models/userModel");
-const {
+import express from "express";
+import { ExpressError } from "../middleware/expressError.js";
+import { User } from "../models/userModel.js";
+import {
   register,
   login,
   updateProfile,
-} = require("../controllers/authController");
-const tokenAuth = require("../middleware/tokenAuth");
+} from "../controllers/authController.js";
+import { tokenAuth } from "../middleware/tokenAuth.js";
+
+const router = express.Router();
+
 router.post("/register", register);
 router.post("/login", login);
 router.get("/profile", tokenAuth, async (req, res, next) => {
@@ -22,4 +24,4 @@ router.get("/profile", tokenAuth, async (req, res, next) => {
   }
 });
 router.patch("/profile", tokenAuth, updateProfile);
-module.exports = router;
+export { router };

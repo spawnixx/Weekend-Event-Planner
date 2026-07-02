@@ -1,8 +1,8 @@
-const ExpressError = require("../middleware/expressError");
-const Group = require("../models/groupModel");
-const crypto = require("crypto");
+import { ExpressError } from "../middleware/expressError.js";
+import { Group } from "../models/groupModel.js";
+import crypto from "crypto";
 
-async function create(req, res, next) {
+export async function createGroup(req, res, next) {
   try {
     const { name, ownerId } = req.body;
     if (!name || !ownerId) {
@@ -25,7 +25,3 @@ async function create(req, res, next) {
     return next(err);
   }
 }
-
-module.exports = {
-  create,
-};

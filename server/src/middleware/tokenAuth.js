@@ -1,7 +1,8 @@
-const ExpressError = require("./expressError");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
-const tokenAuth = (req, res, next) => {
+import { ExpressError } from "./expressError.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
+
+export const tokenAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return next(new ExpressError("No Token", 401));
@@ -16,5 +17,3 @@ const tokenAuth = (req, res, next) => {
     return next(new ExpressError(err.message, 401));
   }
 };
-
-module.exports = tokenAuth;
