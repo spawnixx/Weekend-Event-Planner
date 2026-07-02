@@ -1,26 +1,32 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
 
-    firstName VARCHAR(25) NOT NULL,
-    lastName VARCHAR(25) NOT NULL,
+    firstName TEXT NOT NULL,
+    lastName TEXT NOT NULL,
 
-    email VARCHAR(75) UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
 
-    password VARCHAR(255) NOT NULL
-    groups INTEGER[] DEFAULT '{}'
+    password TEXT NOT NULL
 );
 
 CREATE TABLE groups (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-
-    userIds INTEGER[] DEFAULT '{}', 
+    name TEXT NOT NULL,
+ 
     owner_id INTEGER NOT NULL REFERENCES users(id),
 
-    inviteCode VARCHAR(25) NOT NULL UNIQUE,
+    inviteCode CHAR(8) NOT NULL UNIQUE,
     
     confirmedEventIds INTEGER[] DEFAULT '{}'
 );
+
+CREATE TABLE group_members (
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+  
+  PRIMARY KEY (user_id, group_id)
+);
+
 
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
