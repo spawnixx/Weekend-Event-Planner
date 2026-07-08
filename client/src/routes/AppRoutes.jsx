@@ -5,6 +5,7 @@ import Register from "../views/Register";
 import Profile from "../views/Profile";
 import Groups from "../views/Groups";
 import GroupView from "@/views/GroupView";
+import JoinGroup from "@/views/JoinGroup";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 function AppRoutes() {
   return (
@@ -36,6 +37,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/join/:inviteCode" element={<JoinGroup />} />
     </Routes>
   );
 }

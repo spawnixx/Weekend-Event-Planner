@@ -13,6 +13,39 @@ export async function getUserGroups(req, res, next) {
   }
 }
 
+export async function getGroup(req, res, next) {
+  try {
+    const { id } = req.params;
+    const group = await Group.findById(id, req.user.id);
+
+    if (!group) {
+      return next(new ExpressError("Group not found", 404));
+    }
+    return res.json({ group });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getInvitePreview(req, res, next) {
+  try {
+    const { inviteCode } = req.params;
+    const group = await Group.findByInviteCode(inviteCode);
+
+    if (!group) {
+      return next(new ExpressError("Invalid invite link", 404));
+    }
+    return res.json({
+      group: {
+        id: group.id,
+        name: group.name,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function createGroup(req, res, next) {
   try {
     const { name } = req.body;

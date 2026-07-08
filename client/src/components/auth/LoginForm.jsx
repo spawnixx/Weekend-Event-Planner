@@ -15,7 +15,7 @@ import {
 } from "../ui/field";
 import { Input } from "../ui/input";
 import { useAuth } from "../../context/AuthContext";
-
+import { useNavigate } from "react-router-dom";
 function LoginForm() {
   const { login } = useAuth();
   const {
@@ -26,6 +26,7 @@ function LoginForm() {
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
+  const navigate = useNavigate();
 
   const onSubmit = async (values) => {
     const res = await fetch("http://localhost:3001/users/login", {
@@ -44,7 +45,12 @@ function LoginForm() {
     }
 
     login(data);
-
+    const pendingInvite = localStorage.getItem("pendingInvite");
+    if (pendingInvite) {
+      navigate(`/join/${pendingInvite}`);
+    } else {
+      navigate("/groups");
+    }
     console.log("Logged in:", data.user);
     reset();
   };

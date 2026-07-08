@@ -4,7 +4,7 @@ import { ExpressError } from "./expressError.js";
 export async function validateInviteCode(req, res, next) {
   try {
     const userId = req.user.id;
-    const { inviteCode } = req.body;
+    const inviteCode = req.body?.inviteCode || req.params.inviteCode;
     console.log(req.body);
     if (!inviteCode) {
       return next(new ExpressError("Invite code required", 400));

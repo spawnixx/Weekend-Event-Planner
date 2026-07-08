@@ -15,6 +15,7 @@ import {
 } from "../ui/field";
 import { Input } from "../ui/input";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
   const { login } = useAuth();
@@ -26,6 +27,7 @@ function RegisterForm() {
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
+  const navigate = useNavigate();
 
   const onSubmit = async (values) => {
     const res = await fetch("http://localhost:3001/users/register", {
@@ -44,6 +46,12 @@ function RegisterForm() {
       return;
     }
     login(data);
+    const pendingInvite = localStorage.getItem("pendingInvite");
+    if (pendingInvite) {
+      navigate(`/join/${pendingInvite}`);
+    } else {
+      navigate("/groups");
+    }
     console.log(data.token);
     console.log("User Created:", data.user);
     reset();

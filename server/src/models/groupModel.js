@@ -13,14 +13,17 @@ export class Group {
     return res.rows[0];
   }
 
-  static async findById(id) {
+  static async findById(groupId, userId) {
     const res = await db.query(
       `
-            SELECT *
-            FROM groups
-            WHERE id = $1
+      SELECT g.*
+      FROM groups g
+      JOIN group_members gm
+        ON gm.group_id = g.id
+      WHERE g.id = $1
+      AND gm.user_id = $2
         `,
-      [id],
+      [groupId, userId],
     );
     return res.rows[0];
   }

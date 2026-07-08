@@ -4,16 +4,24 @@ import {
   createGroup,
   getUserGroups,
   joinByInviteCode,
+  getGroup,
+  getInvitePreview,
 } from "../controllers/groupController.js";
 import { validateInviteCode } from "../middleware/validateInviteCode.js";
 
 const router = express.Router();
 
 router.get("/", tokenAuth, getUserGroups);
-router.get("/:id", tokenAuth);
+router.get("/invite/:inviteCode", getInvitePreview);
+router.get("/:id", tokenAuth, getGroup);
 
 router.post("/create", tokenAuth, createGroup);
 router.post("/join", tokenAuth, validateInviteCode, joinByInviteCode);
-router.post("/join/:inviteCode", tokenAuth, joinByInviteCode);
+router.post(
+  "/invite/:inviteCode",
+  tokenAuth,
+  validateInviteCode,
+  joinByInviteCode,
+);
 
 export { router };
