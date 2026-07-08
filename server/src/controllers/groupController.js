@@ -2,6 +2,17 @@ import { ExpressError } from "../middleware/expressError.js";
 import { Group } from "../models/groupModel.js";
 import crypto from "crypto";
 
+export async function getUserGroups(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const groups = await Group.findUserGroups(userId);
+
+    return res.json({ groups });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function createGroup(req, res, next) {
   try {
     const { name } = req.body;
@@ -39,10 +50,12 @@ export async function joinByInviteCode(req, res, next) {
   try {
     const userId = req.user.id;
     const groupId = req.group.id;
-
+    console.log(userId, groupId);
     await Group.addMember(groupId, userId);
 
-    res.json({ message: "Joined group successfully", group: req.group });
+    return res.status(201).json({
+      group: req.group,
+    });
   } catch (err) {
     next(err);
   }

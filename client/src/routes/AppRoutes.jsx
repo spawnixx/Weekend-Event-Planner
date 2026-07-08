@@ -4,6 +4,7 @@ import Login from "../views/Login";
 import Register from "../views/Register";
 import Profile from "../views/Profile";
 import Groups from "../views/Groups";
+import GroupView from "@/views/GroupView";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 function AppRoutes() {
   return (
@@ -24,6 +25,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Groups />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/groups/:id"
+        element={
+          <ProtectedRoute>
+            <GroupView />
           </ProtectedRoute>
         }
       />

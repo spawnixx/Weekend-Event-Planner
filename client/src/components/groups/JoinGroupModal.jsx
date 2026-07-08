@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { groupSchema } from "../../lib/groupSchema";
+import { joinGroupSchema } from "@/lib/joinGroupSchema";
 
 import { Button } from "../ui/button";
 import {
@@ -18,7 +17,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useState } from "react";
 
-function CreateGroupModal({ onGroupChange }) {
+function JoinGroupModal({ onGroupChange }) {
   const [open, setOpen] = useState(false);
   const {
     register,
@@ -26,12 +25,13 @@ function CreateGroupModal({ onGroupChange }) {
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
-    resolver: zodResolver(groupSchema),
+    resolver: zodResolver(joinGroupSchema),
   });
+
   const onSubmit = async (values) => {
-    console.log("submitting:", values);
+    console.log("submitting code:", values);
     const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:3001/groups/create", {
+    const res = await fetch("http://localhost:3001/groups/join", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,12 +41,11 @@ function CreateGroupModal({ onGroupChange }) {
     });
 
     const data = await res.json();
-
     if (!res.ok) {
       console.log(data.message);
       return;
     }
-    console.log("Group created:", data);
+    console.log("Joined group successfully:", data);
     await onGroupChange();
     reset();
     setOpen(false);
@@ -55,17 +54,17 @@ function CreateGroupModal({ onGroupChange }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Create New Group</Button>
+        <Button variant="outline">Join a Group</Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={submitHandler}>
           <DialogHeader>
-            <DialogTitle>Create a new group</DialogTitle>
+            <DialogTitle>Join a group via invite code</DialogTitle>
           </DialogHeader>
           <FieldGroup>
             <Field>
-              <Label>Group Name</Label>
-              <Input placeholder="Book Club" {...register("name")} />
+              <Label>Invite Code</Label>
+              <Input placeholder="ABC123" {...register("inviteCode")} />
             </Field>
           </FieldGroup>
           <DialogFooter>
@@ -73,7 +72,7 @@ function CreateGroupModal({ onGroupChange }) {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating group..." : "Create Group"}
+              {isSubmitting ? "Joining group..." : "Join Group"}
             </Button>
           </DialogFooter>
         </form>
@@ -82,4 +81,4 @@ function CreateGroupModal({ onGroupChange }) {
   );
 }
 
-export default CreateGroupModal;
+export default JoinGroupModal;

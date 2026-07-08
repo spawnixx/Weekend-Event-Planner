@@ -39,12 +39,16 @@ export class Group {
   static async findUserGroups(userId) {
     const res = await db.query(
       `
-      SELECT groupId from group_members
-      WHERE userId = $1
+      SELECT g.*
+      FROM groups g
+      JOIN group_members gm
+        ON gm.group_id = g.id
+      WHERE gm.user_id = $1
+      ORDER BY g.name
       `,
       [userId],
     );
-    return res.rows[0];
+    return res.rows;
   }
 
   static async addMember(groupId, userId) {
