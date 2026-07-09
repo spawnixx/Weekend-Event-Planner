@@ -7,13 +7,13 @@ export async function register(req, res, next) {
   try {
     const { firstName, lastName, email, password } = req.body;
     if (!firstName || !lastName || !email || !password) {
-      next(new ExpressError("All fields are required", 400));
+      return next(new ExpressError("All fields are required", 400));
     }
 
     const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
-      next(new ExpressError("Email already in use.", 400));
+      return next(new ExpressError("Email already in use.", 400));
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);

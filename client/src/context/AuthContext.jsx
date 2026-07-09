@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -41,6 +40,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("pendingInvite");
     setToken(null);
     setUser(null);
   };

@@ -83,7 +83,7 @@ export class Group {
     const res = await db.query(
       `
     DELETE FROM group_members
-    WHERE group_Id = $1 AND user_Id = $2
+    WHERE group_id = $1 AND user_id = $2
     `,
       [groupId, userId],
     );

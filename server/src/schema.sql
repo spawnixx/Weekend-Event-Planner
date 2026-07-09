@@ -15,27 +15,26 @@ CREATE TABLE groups (
  
     owner_id INTEGER NOT NULL REFERENCES users(id),
 
-    inviteCode CHAR(8) NOT NULL UNIQUE,
+    invite_code CHAR(8) NOT NULL UNIQUE,
     
-    confirmedEventIds INTEGER[] DEFAULT '{}'
 );
 
 CREATE TABLE group_members (
-  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+  userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   
-  PRIMARY KEY (user_id, group_id)
+  PRIMARY KEY (userId, groupId)
 );
 
 
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
-    groupId INTEGER NOT NULL REFERENCES groups(id),
+    groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
 
-    title VARCHAR NOT NULL,
+    title TEXT NOT NULL,
 
-    startDate DATE,
-    endDate DATE,
+    startDate TIMESTAMP,
+    endDate TIMESTAMP,
 
     googleMapsApiId VARCHAR,
     ticketmasterId VARCHAR,
@@ -43,10 +42,15 @@ CREATE TABLE events (
     eventImageUrl TEXT,
     description TEXT,
 
-    votesFor INTEGER[] DEFAULT '{}',
-    votesAgainst INTEGER[] DEFAULT '{}',
+    votingEnds TIMESTAMP,
 
-    votingEnds DATE,
+    status TEXT NOT NULL DEFAULT 'proposed'
+);
 
-    confirmed BOOLEAN DEFAULT FALSE
+CREATE TABLE event_votes (
+    eventId INTEGER REFERENCES events(id) ON DELETE CASCADE,
+    userId INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    vote BOOLEAN NOT NULL,
+
+    PRIMARY KEY (eventId, userId)
 );

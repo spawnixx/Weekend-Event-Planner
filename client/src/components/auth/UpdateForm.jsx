@@ -6,8 +6,6 @@ import { updateSchema } from "../../lib/updateSchema";
 import { Button } from "../ui/button";
 import {
   Field,
-  FieldDescription,
-  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,

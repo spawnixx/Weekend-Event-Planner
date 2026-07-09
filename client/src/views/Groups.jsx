@@ -17,11 +17,12 @@ function Groups() {
     // console.log("Groups response:", data);
     setGroups(data.groups);
   };
-
   useEffect(() => {
     fetchGroups();
-  });
-
+  }, []);
+  if (!groups) {
+    return <p>Loading Groups...</p>;
+  }
   return (
     <>
       <h1>Groups</h1>
