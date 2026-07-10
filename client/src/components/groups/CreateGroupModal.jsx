@@ -30,12 +30,11 @@ function CreateGroupModal({ onGroupChange }) {
   });
   const onSubmit = async (values) => {
     console.log("submitting:", values);
-    const token = localStorage.getItem("token");
     const res = await fetch("http://localhost:3001/groups/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify(values),
     });

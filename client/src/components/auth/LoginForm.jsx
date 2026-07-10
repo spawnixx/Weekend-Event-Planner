@@ -71,7 +71,11 @@ function LoginForm() {
 
           <Field>
             <FieldLabel>Password</FieldLabel>
-            <Input placeholder="Your Password" {...register("password")} />
+            <Input
+              type="password"
+              placeholder="Your Password"
+              {...register("password")}
+            />
             {errors.password && (
               <FieldError>{errors.password.message}</FieldError>
             )}

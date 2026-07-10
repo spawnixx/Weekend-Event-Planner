@@ -1,6 +1,7 @@
 import EventCard from "@/components/events/EventCard";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import CreateEventModal from "@/components/events/CreateEventModal";
 function GroupView() {
   const { id } = useParams();
   const [group, setGroup] = useState(null);
@@ -37,7 +38,7 @@ function GroupView() {
   };
   useEffect(() => {
     fetchEvents();
-  }, [id]);
+  }, []);
 
   if (!group) {
     return <p>Loading group...</p>;
@@ -46,9 +47,9 @@ function GroupView() {
     <div>
       <h1>{group.name}</h1>
       <p>Invite Code: {group.invite_code}</p>
-      {/* <CreateEventModal onEventCreated={fetchEvents} /> */}
+      <CreateEventModal onEventCreated={fetchEvents} groupId={id} />
       {events.map((event) => (
-        <EventCard key={event.id} events={event} />
+        <EventCard key={event.id} event={event} />
       ))}
     </div>
   );

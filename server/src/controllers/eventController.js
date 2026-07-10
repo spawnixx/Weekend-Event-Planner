@@ -3,13 +3,12 @@ import { Event } from "../models/eventModel.js";
 
 export async function createEvent(req, res, next) {
   try {
-    console.log("EVENT BODY:", req.body);
-    console.log("GROUP ID:", req.params.id);
     const groupId = req.params.id;
     const {
       title,
       startDate,
       endDate,
+      location,
       googleMapsApiId,
       ticketmasterId,
       eventImageUrl,
@@ -17,7 +16,14 @@ export async function createEvent(req, res, next) {
       votingEnds,
     } = req.body;
 
-    if (!title || !startDate || !endDate || !description || !votingEnds) {
+    if (
+      !title ||
+      !startDate ||
+      !endDate ||
+      !location ||
+      !description ||
+      !votingEnds
+    ) {
       return next(new ExpressError("Fill all required fields", 400));
     }
     const newEvent = await Event.createEvent({
@@ -25,6 +31,7 @@ export async function createEvent(req, res, next) {
       title,
       startDate,
       endDate,
+      location,
       googleMapsApiId,
       ticketmasterId,
       eventImageUrl,

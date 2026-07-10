@@ -36,6 +36,10 @@ CREATE TABLE events (
     startDate TIMESTAMP,
     endDate TIMESTAMP,
 
+    location TEXT,
+    latitude NUMERIC,
+    longitude NUMERIC,
+
     googleMapsApiId VARCHAR,
     ticketmasterId VARCHAR,
 
