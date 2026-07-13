@@ -7,7 +7,11 @@ import {
   getGroup,
   getInvitePreview,
 } from "../controllers/groupController.js";
-import { createEvent, getGroupEvents } from "../controllers/eventController.js";
+import {
+  createEvent,
+  getGroupEvents,
+  voteEvent,
+} from "../controllers/eventController.js";
 import { validateInviteCode } from "../middleware/validateInviteCode.js";
 
 const router = express.Router();
@@ -26,5 +30,6 @@ router.post(
   joinByInviteCode,
 );
 router.post("/:id/events", tokenAuth, createEvent);
+router.post("/:groupId/events/:eventId/vote", tokenAuth, voteEvent);
 
 export { router };

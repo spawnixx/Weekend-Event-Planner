@@ -29,30 +29,34 @@ function LoginForm() {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
-    const res = await fetch("http://localhost:3001/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    try {
+      const res = await fetch("http://localhost:3001/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-      console.log(data.message);
-      return;
+      if (!res.ok) {
+        console.log(data.message || res.statusText);
+        return;
+      }
+
+      login(data);
+      const pendingInvite = localStorage.getItem("pendingInvite");
+      if (pendingInvite) {
+        navigate(`/join/${pendingInvite}`);
+      } else {
+        navigate("/groups");
+      }
+      console.log("Logged in:", data.user);
+      reset();
+    } catch (err) {
+      console.log(err);
     }
-
-    login(data);
-    const pendingInvite = localStorage.getItem("pendingInvite");
-    if (pendingInvite) {
-      navigate(`/join/${pendingInvite}`);
-    } else {
-      navigate("/groups");
-    }
-    console.log("Logged in:", data.user);
-    reset();
   };
   const submitHandler = handleSubmit(onSubmit);
   return (

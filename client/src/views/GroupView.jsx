@@ -6,6 +6,23 @@ function GroupView() {
   const { id } = useParams();
   const [group, setGroup] = useState(null);
   const [events, setEvents] = useState([]);
+
+  const fetchEvents = async () => {
+    const res = await fetch(`http://localhost:3001/groups/${id}/events`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.token}`,
+      },
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      setEvents(data.events);
+    }
+  };
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   useEffect(() => {
     const fetchGroup = async () => {
       const res = await fetch(`http://localhost:3001/groups/${id}`, {
@@ -24,22 +41,6 @@ function GroupView() {
     fetchGroup();
   }, [id]);
 
-  const fetchEvents = async () => {
-    const res = await fetch(`http://localhost:3001/groups/${id}/events`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.token}`,
-      },
-    });
-    const data = await res.json();
-
-    if (res.ok) {
-      setEvents(data.events);
-    }
-  };
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
   if (!group) {
     return <p>Loading group...</p>;
   }
@@ -49,7 +50,9 @@ function GroupView() {
       <p>Invite Code: {group.invite_code}</p>
       <CreateEventModal onEventCreated={fetchEvents} groupId={id} />
       {events.map((event) => (
-        <EventCard key={event.id} event={event} />
+        <div key={event.id}>
+          <EventCard key={event.id} event={event} onEventChange={fetchEvents} />
+        </div>
       ))}
     </div>
   );
