@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { loginSchema } from "../../lib/loginSchema";
+import { loginSchema } from "@/lib/loginSchema";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,9 +12,9 @@ import {
   FieldLabel,
   FieldLegend,
   FieldSet,
-} from "../ui/field";
-import { Input } from "../ui/input";
-import { useAuth } from "../../context/AuthContext";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 function LoginForm() {
   const { login } = useAuth();

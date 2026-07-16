@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateSchema } from "../../lib/updateSchema";
+import { updateSchema } from "@/lib/updateSchema";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldLegend,
   FieldSet,
-} from "../ui/field";
-import { Input } from "../ui/input";
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 function UpdateForm() {
   const [user, setUser] = useState(null);

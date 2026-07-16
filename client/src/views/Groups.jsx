@@ -1,5 +1,5 @@
 import JoinGroupModal from "@/components/groups/JoinGroupModal";
-import CreateGroupModal from "../components/groups/CreateGroupModal";
+import CreateGroupModal from "@/components/groups/CreateGroupModal";
 import { useEffect, useState } from "react";
 import GroupCard from "@/components/groups/GroupCard";
 function Groups() {

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 export default function VoteBadge({ member }) {
   let color = "bg-gray-300 text-gray-900";
 

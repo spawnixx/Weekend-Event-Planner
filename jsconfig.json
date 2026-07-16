@@ -1,7 +1,19 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/controllers": ["./src/controllers"],
+      "@/controllers/*": ["./src/controllers/*"],
+      "@/middleware": ["./src/middleware"],
+      "@/middleware/*": ["./src/middleware/*"],
+      "@/models": ["./src/models"],
+      "@/models/*": ["./src/models/*"],
+      "@/routes": ["./src/routes"],
+      "@/routes/*": ["./src/routes/*"],
+      "@/utils": ["./src/utils"],
+      "@/utils/*": ["./src/utils/*"]
     },
     "strict": true
   }

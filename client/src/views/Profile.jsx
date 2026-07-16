@@ -1,4 +1,4 @@
-import UpdateForm from "../components/auth/UpdateForm";
+import UpdateForm from "@/components/auth/UpdateForm";
 function Profile() {
   return (
     <>

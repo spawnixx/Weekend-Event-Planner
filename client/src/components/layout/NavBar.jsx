@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import VoteBadge from "./VoteBadge";
 import {
@@ -9,7 +9,7 @@ import {
   ThumbsDown,
   ThumbsUp,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function EventCard({ event, onEventChange }) {
   function formatDate(date) {
     return new Date(date).toLocaleString();
