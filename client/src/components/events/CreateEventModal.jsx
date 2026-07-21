@@ -47,9 +47,13 @@ export default function CreateEventModal({ groupId, onEventCreated }) {
 
     if (!res.ok) {
       console.log(data.message);
+      toast.error(data.error);
       return;
     }
     console.log("Event created:", data);
+    toast.success("Event Created:", {
+      description: data,
+    });
     await onEventCreated();
     reset();
     setDialogOpen(false);

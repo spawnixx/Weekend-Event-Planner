@@ -13,6 +13,7 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +43,7 @@ function LoginForm() {
 
       if (!res.ok) {
         console.log(data.message || res.statusText);
+        toast.error(data.message);
         return;
       }
 
@@ -53,6 +55,7 @@ function LoginForm() {
         navigate("/groups");
       }
       console.log("Logged in:", data.user);
+      toast.success("Logged in");
       reset();
     } catch (err) {
       console.log(err);

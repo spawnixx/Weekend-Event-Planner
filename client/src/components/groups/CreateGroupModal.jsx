@@ -13,7 +13,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
+import {
+  Field,
+  FieldGroup,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -43,9 +48,11 @@ function CreateGroupModal({ onGroupChange }) {
 
     if (!res.ok) {
       console.log(data.message);
+      toast.error(data.message);
       return;
     }
     console.log("Group created:", data);
+    toast.success("Group Created!");
     await onGroupChange();
     reset();
     setOpen(false);
@@ -63,8 +70,11 @@ function CreateGroupModal({ onGroupChange }) {
           </DialogHeader>
           <FieldGroup>
             <Field>
-              <Label>Group Name</Label>
-              <Input placeholder="Book Club" {...register("name")} />
+              <FieldLabel>
+                Group Name
+                <Input placeholder="Book Club" {...register("name")} />
+                {errors.name && <FieldError>{errors.name.message}</FieldError>}
+              </FieldLabel>
             </Field>
           </FieldGroup>
           <DialogFooter>

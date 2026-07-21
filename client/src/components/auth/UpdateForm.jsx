@@ -12,6 +12,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 function UpdateForm() {
   const [user, setUser] = useState(null);
@@ -68,10 +69,12 @@ function UpdateForm() {
     const data = await res.json();
     if (!res.ok) {
       console.log(data.message);
+      toast.error(data.message);
       return;
     }
 
     console.log("Profile Updated:", data);
+    toast.success("Profile Updated!");
     setUser(data);
     reset(data);
   };

@@ -13,6 +13,7 @@ import {
   voteEvent,
 } from "../controllers/eventController.js";
 import { validateInviteCode } from "../middleware/validateInviteCode.js";
+import validateEvent from "../middleware/validateEvent.js";
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post(
   validateInviteCode,
   joinByInviteCode,
 );
-router.post("/:id/events", tokenAuth, createEvent);
+router.post("/:id/events", tokenAuth, validateEvent, createEvent);
 router.post("/:groupId/events/:eventId/vote", tokenAuth, voteEvent);
 
 export { router };

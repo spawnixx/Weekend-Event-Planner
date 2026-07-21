@@ -12,7 +12,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -43,9 +48,11 @@ function JoinGroupModal({ onGroupChange }) {
     const data = await res.json();
     if (!res.ok) {
       console.log(data.message);
+      toast.error(data.message);
       return;
     }
     console.log("Joined group successfully:", data);
+    toast.success("Join Group Successful");
     await onGroupChange();
     reset();
     setOpen(false);
@@ -65,6 +72,9 @@ function JoinGroupModal({ onGroupChange }) {
             <Field>
               <Label>Invite Code</Label>
               <Input placeholder="ABC123" {...register("inviteCode")} />
+              {errors.inviteCode && (
+                <FieldError>{errors.inviteCode.message}</FieldError>
+              )}
             </Field>
           </FieldGroup>
           <DialogFooter>

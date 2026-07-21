@@ -14,6 +14,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -42,6 +43,7 @@ function RegisterForm() {
     const data = await res.json();
 
     if (!res.ok) {
+      toast.error(data.message);
       console.log(data.message);
       return;
     }
@@ -53,6 +55,7 @@ function RegisterForm() {
       navigate("/groups");
     }
     console.log(data.token);
+    toast.success("User Registered:", { description: data.user });
     console.log("User Created:", data.user);
     reset();
   };

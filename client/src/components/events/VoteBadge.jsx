@@ -1,27 +1,24 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 export default function VoteBadge({ member }) {
-  let color = "bg-gray-300 text-gray-900";
+  let fallbackColor = "bg-gray-300 text-gray-900";
+  let avatarColor = " border-2 border-gray-400";
 
   if (member.vote === true) {
-    color = "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300";
+    fallbackColor =
+      "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300";
+    avatarColor = " border-2 border-green-500";
   }
 
   if (member.vote === false) {
-    color = "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300";
+    fallbackColor = "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300";
+    avatarColor = " border-2 border-red-500";
   }
 
   return (
-    <Avatar
-      title={`${member.name}`}
-      className={`border-2 ${
-        member.vote === true
-          ? "border-green-500"
-          : member.vote === false
-            ? "border-red-500"
-            : "border-gray-400"
-      }`}
-    >
-      <AvatarFallback className={`${color} `}>{member.initials}</AvatarFallback>
+    <Avatar title={member.name} className={avatarColor}>
+      <AvatarFallback className={fallbackColor}>
+        {member.initials}
+      </AvatarFallback>
     </Avatar>
   );
 }

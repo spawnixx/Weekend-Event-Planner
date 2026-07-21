@@ -10,6 +10,7 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
 export default function EventCard({ event, onEventChange }) {
   function formatDate(date) {
     return new Date(date).toLocaleString();
@@ -35,9 +36,11 @@ export default function EventCard({ event, onEventChange }) {
 
     if (!res.ok) {
       console.log(data);
+      toast.error(data.message);
       return;
     }
-    console.log("Vote saved:", data);
+    console.log("Vote saved:", data.vote.vote);
+    toast.success("Vote Saved!");
     await onEventChange();
   }
 
