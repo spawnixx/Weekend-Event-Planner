@@ -12,6 +12,11 @@ function NavBar() {
   };
   return (
     <nav className="flex items-center gap-4">
+      {user && (
+        <span className="text-sm text-muted-foreground">
+          Welcome, {user.firstname}
+        </span>
+      )}
       <Link to="/">Home</Link>
       {user ? (
         <>

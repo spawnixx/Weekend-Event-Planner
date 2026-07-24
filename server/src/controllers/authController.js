@@ -62,14 +62,23 @@ export async function login(req, res, next) {
   }
 }
 
-export async function updateProfile(req, res) {
-  const { firstName, lastName, email } = req.body;
+export async function updateProfile(req, res, next) {
+  const { firstName, lastName, email, currentPassword, newPassword } = req.body;
   const userId = req.user.id;
-  const updatedUser = await User.patch({
+  if (newPassword) {
+    const validPassword = await User.verifyPassword(userId, currentPassword);
+    if (!validPassword) {
+      return next(new ExpressError("Current password is incorrect", 401));
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    await User.updatePassword(userId, hashedPassword);
+  }
+  const updatedUser = await User.updateUser({
     id: userId,
     firstName,
     lastName,
     email,
   });
+
   res.json(updatedUser);
 }

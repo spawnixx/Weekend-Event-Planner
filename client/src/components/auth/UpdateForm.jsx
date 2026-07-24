@@ -6,6 +6,7 @@ import { updateSchema } from "@/lib/updateSchema";
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -28,6 +29,9 @@ function UpdateForm() {
       firstName: "",
       lastName: "",
       email: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
   useEffect(() => {
@@ -46,6 +50,9 @@ function UpdateForm() {
             firstName: data.firstname || "",
             lastName: data.lastname || "",
             email: data.email || "",
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
           });
         }
       } catch (err) {
@@ -92,14 +99,44 @@ function UpdateForm() {
             <Field>
               <FieldLabel>First Name</FieldLabel>
               <Input {...register("firstName")} />
+              {errors.firstName && (
+                <FieldError>{errors.firstName.message}</FieldError>
+              )}
             </Field>
             <Field>
               <FieldLabel>Last Name</FieldLabel>
               <Input {...register("lastName")} />
+              {errors.lastName && (
+                <FieldError>{errors.lastName.message}</FieldError>
+              )}
             </Field>
             <Field>
               <FieldLabel>Email</FieldLabel>
               <Input {...register("email")} />
+              {errors.email && <FieldError>{errors.email.message}</FieldError>}
+            </Field>
+          </FieldGroup>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Current Password</FieldLabel>
+              <Input type={"password"} {...register("currentPassword")} />
+              {errors.currentPassword && (
+                <FieldError>{errors.currentPassword.message}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>New Password</FieldLabel>
+              <Input type={"password"} {...register("newPassword")} />
+              {errors.newPassword && (
+                <FieldError>{errors.newPassword.message}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Confirm Password</FieldLabel>
+              <Input type={"password"} {...register("confirmPassword")} />
+              {errors.confirmPassword && (
+                <FieldError>{errors.confirmPassword.message}</FieldError>
+              )}
             </Field>
           </FieldGroup>
           <Button type="submit" disabled={isSubmitting}>

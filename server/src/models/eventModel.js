@@ -7,6 +7,9 @@ export class Event {
       title,
       startDate,
       endDate,
+      location,
+      latitude,
+      longitude,
       googleMapsApiId,
       ticketmasterId,
       eventImageUrl,
@@ -20,12 +23,15 @@ export class Event {
         title,
         startDate,
         endDate,
+        location,
+        latitude,
+        longitude,
         googleMapsApiId,
         ticketmasterId,
         eventImageUrl,
         description,
         votingEnds)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
         RETURNING *
         `,
       [
@@ -33,6 +39,9 @@ export class Event {
         title,
         startDate,
         endDate,
+        location,
+        latitude,
+        longitude,
         googleMapsApiId,
         ticketmasterId,
         eventImageUrl,
@@ -181,5 +190,40 @@ export class Event {
     AND enddate < NOW() OR votingends < NOW()
     `,
     );
+  }
+  static async updateEvent(eventId, updates) {
+    const { title, startDate, endDate, description, votingEnds, location } =
+      updates;
+
+    const result = await db.query(
+      `
+    UPDATE events
+    SET
+      title = COALESCE($1, title),
+      startdate = COALESCE($2, startdate),
+      enddate = COALESCE($3, enddate),
+      description = COALESCE($4, description),
+      votingends = COALESCE($5, votingends),
+      location = COALESCE($6, location)
+    WHERE id = $7
+    RETURNING *
+    `,
+      [title, startDate, endDate, description, votingEnds, location, eventId],
+    );
+
+    return result.rows[0];
+  }
+
+  static async deleteEvent(eventId) {
+    const result = await db.query(
+      `
+    DELETE FROM events
+    WHERE id = $1
+    RETURNING id
+    `,
+      [eventId],
+    );
+
+    return result.rows[0];
   }
 }

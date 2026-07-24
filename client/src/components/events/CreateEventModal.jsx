@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
+import { toast } from "sonner";
+
 import { useState } from "react";
 
 export default function CreateEventModal({ groupId, onEventCreated }) {

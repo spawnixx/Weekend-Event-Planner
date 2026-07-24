@@ -19,14 +19,25 @@ CREATE TABLE groups (
     
 );
 
+CREATE TYPE member_role AS ENUM (
+    'owner',
+    'member'
+);
+
 CREATE TABLE group_members (
   userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+  role member_role NOT NULL DEFAULT 'member';
   
   PRIMARY KEY (userId, groupId)
 );
 
 
+CREATE TYPE event_status AS ENUM (
+    'proposed',
+    'confirmed',
+    'closed'
+);
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
@@ -48,7 +59,7 @@ CREATE TABLE events (
 
     votingEnds TIMESTAMP,
 
-    status TEXT NOT NULL DEFAULT 'proposed'
+    status event_status NOT NULL DEFAULT 'proposed'
 );
 
 CREATE TABLE event_votes (

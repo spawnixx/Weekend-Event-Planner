@@ -1,5 +1,5 @@
 import { db } from "../db.js";
-
+import bcrypt from "bcrypt";
 export class User {
   static async create({ firstName, lastName, email, password }) {
     const result = await db.query(
@@ -13,7 +13,7 @@ export class User {
 
     return result.rows[0];
   }
-  static async patch({ id, firstName, lastName, email }) {
+  static async updateUser({ id, firstName, lastName, email }) {
     const result = await db.query(
       `
       UPDATE users
@@ -26,6 +26,32 @@ export class User {
       [id, firstName, lastName, email],
     );
     return result.rows[0];
+  }
+
+  static async verifyPassword(userId, currentPassword) {
+    const res = await db.query(
+      `
+      SELECT password
+      FROM users
+      WHERE id = $1
+      `,
+      [userId],
+    );
+    const user = res.rows[0];
+
+    if (!user) return false;
+    return bcrypt.compare(currentPassword, user.password);
+  }
+
+  static async updatePassword(userId, newPassword) {
+    await db.query(
+      `
+      UPDATE users
+      SET password = $1
+      WHERE id = $2
+      `,
+      [newPassword, userId],
+    );
   }
 
   static async findByEmail(email) {

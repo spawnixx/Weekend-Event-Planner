@@ -93,3 +93,27 @@ export async function joinByInviteCode(req, res, next) {
     next(err);
   }
 }
+
+export async function getGroupMembers(req, res, next) {
+  try {
+    const members = await Group.getMembers(req.params.groupId);
+    return res.json({ members });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function removeMember(req, res, next) {
+  try {
+    const removedMember = await Group.removeMember(
+      req.params.groupId,
+      req.params.userId,
+    );
+    return res.json({
+      message: "Member removed",
+      userId: removedMember.user_id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+}

@@ -11,7 +11,10 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-export default function EventCard({ event, onEventChange }) {
+import { useAuth } from "@/context/AuthContext";
+import EditEventModal from "./EditEventModal";
+export default function EventCard({ event, onEventChange, isOwner }) {
+  const { user } = useAuth();
   function formatDate(date) {
     return new Date(date).toLocaleString();
   }
@@ -45,6 +48,36 @@ export default function EventCard({ event, onEventChange }) {
   }
 
   const votingClosed = new Date() > new Date(event.votingends);
+  const currentMember = event.members?.find((member) => member.id === user?.id);
+
+  const userVote = currentMember?.vote ?? null;
+
+  async function handleDelete() {
+    const confirmed = window.confirm(`Delete "${event.title}"?`);
+    if (!confirmed) return;
+
+    const res = await fetch(
+      `http://localhost:3001/groups/${event.groupid}/events/${event.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.token}`,
+        },
+      },
+    );
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error(data.message || "Unable to delete event");
+      return;
+    }
+
+    toast.success("Event deleted");
+    onEventChange({
+      type: "delete",
+      eventId: data.eventId,
+    });
+  }
 
   return (
     <>
@@ -55,10 +88,10 @@ export default function EventCard({ event, onEventChange }) {
         <CardContent>
           <p>Starts: {formatDate(event.startdate)}</p>
           <p>Ends: {formatDate(event.enddate)}</p>
-          <p>Voting Ends:{formatDate(event.votingends)}</p>
+
           {event.location && (
             <p>
-              <MapPin /> {event.location}
+              <MapPin className="inline" /> {event.location}
             </p>
           )}
           {event?.status === "closed" && (
@@ -91,31 +124,34 @@ export default function EventCard({ event, onEventChange }) {
 
           <div className="flex gap-2">
             <Button
-              variant="ghost"
+              variant="outline"
+              className={
+                userVote === true
+                  ? "gap-2 border-green-600 bg-green-50 text-green-700 ring-2 ring-green-200"
+                  : ""
+              }
               onClick={() => handleVote(true)}
               disabled={votingClosed}
             >
-              <Badge variant="secondary" className="gap-1">
-                <ThumbsUp
-                  className="h-4 w-4 text-green-600"
-                  fill="currentColor"
-                />
-                <span>{event.votes_for}</span>
-              </Badge>
+              <ThumbsUp className="h-4 w-4" />
+              <span>{event.votes_for}</span>
             </Button>
+
             <Button
-              variant="ghost"
+              variant="outline"
+              className={
+                userVote === false
+                  ? " gap-2 border-red-600 bg-red-50 text-red-700 ring-2 ring-red-200"
+                  : ""
+              }
               onClick={() => handleVote(false)}
               disabled={votingClosed}
             >
-              <Badge variant="secondary" className="gap-1">
-                <ThumbsDown
-                  className="h-4 w-4 text-red-600"
-                  fill="currentColor"
-                />
-                {event.votes_against}
-              </Badge>
+              <ThumbsDown className="h-4 w-4" />
+              <span>{event.votes_against}</span>
             </Button>
+            {!votingClosed && <p>Voting Ends:{formatDate(event.votingends)}</p>}
+
             {votingClosed && <Badge variant="secondary">Voting Closed</Badge>}
           </div>
           {expandCard && (
@@ -124,9 +160,19 @@ export default function EventCard({ event, onEventChange }) {
 
               <h3>Description</h3>
               <p>{event?.description}</p>
+
               {event.members?.map((member) => (
                 <VoteBadge key={member.id} member={member} />
               ))}
+              {isOwner && event.status === "proposed" && (
+                <div className="flex gap-2">
+                  <EditEventModal event={event} onEventChange={onEventChange} />
+
+                  <Button variant="destructive" onClick={handleDelete}>
+                    Delete Event
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
