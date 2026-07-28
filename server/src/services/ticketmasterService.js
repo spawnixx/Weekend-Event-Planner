@@ -1,4 +1,4 @@
-import { ExpressError } from "../middleware/expressError";
+import { ExpressError } from "../middleware/expressError.js";
 
 const TICKETMASTER_BASE_URL = "https://app.ticketmaster.com/discovery/v2";
 
@@ -83,7 +83,7 @@ export class TicketmasterService {
 
     return {
       ticketmasterId: event.id,
-      title: event.title,
+      title: event.name,
       description: event.info ?? event.pleaseNote ?? event.description ?? "",
       startDate:
         event.dates?.start?.dateTime ??

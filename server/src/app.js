@@ -5,6 +5,7 @@ import { db } from "./db.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { router as userRoutes } from "./routes/userRoutes.js";
 import { router as groupRoutes } from "./routes/groupRoutes.js";
+import ticketmasterRoutes from "./routes/ticketmasterRoutes.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/groups", groupRoutes);
+app.use("/ticketmaster", ticketmasterRoutes);
 
 app.use(errorHandler);
 
