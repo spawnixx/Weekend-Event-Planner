@@ -91,7 +91,7 @@ export class TicketmasterService {
           event.dates?.start?.localDate,
           event.dates?.start?.localTime,
         ),
-      endDate: null,
+      endDate: event.dates?.end?.dateTime || null,
       location: venue?.name ?? TicketmasterService.formatAddress(venue),
       venueName: venue?.name ?? "",
       address: TicketmasterService.formatAddress(venue),

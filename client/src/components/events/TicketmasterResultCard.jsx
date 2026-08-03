@@ -65,7 +65,7 @@ export default function TicketmasterResultCard({
       const eventPayload = {
         title: event.title,
         startDate: event.startDate,
-        endDate: event.endDate,
+        endDate: event.endDate ?? null,
         location: event.location,
         description: event.description,
         votingEnds: createDefaultVotingDeadline(event.startDate),
