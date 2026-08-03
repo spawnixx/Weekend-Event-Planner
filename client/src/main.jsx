@@ -4,13 +4,19 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </AuthProvider>
-  </React.StrictMode>,
+  <APIProvider
+    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+    onLoad={() => console.log("Maps API has loaded.")}
+  >
+    <React.StrictMode>
+      <AuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
+    </React.StrictMode>
+  </APIProvider>,
 );

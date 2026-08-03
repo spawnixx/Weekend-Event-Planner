@@ -25,9 +25,7 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
         `http://localhost:3001/groups/${group.id}/members/${memberId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.token}`,
-          },
+          credentials: "include",
         },
       );
       const data = await res.json();

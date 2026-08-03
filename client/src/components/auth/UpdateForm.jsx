@@ -38,9 +38,7 @@ function UpdateForm() {
     const fetchUser = async () => {
       try {
         const res = await fetch("http://localhost:3001/users/profile", {
-          headers: {
-            Authorization: `Bearer ${localStorage.token}`,
-          },
+          credentials: "include",
         });
         const data = await res.json();
         if (res.ok) {
@@ -68,8 +66,8 @@ function UpdateForm() {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.token}`,
       },
+      credentials: "include",
       body: JSON.stringify(values),
     });
 

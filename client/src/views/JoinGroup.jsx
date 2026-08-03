@@ -1,60 +1,81 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 function JoinGroup() {
   const { inviteCode } = useParams();
+  const { isAuthenticated, loading } = useAuth();
+
   const [group, setGroup] = useState(null);
   const [message, setMessage] = useState(null);
+  const [joining, setJoining] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchInvite() {
-      const res = await fetch(
-        `http://localhost:3001/groups/invite/${inviteCode}`,
-      );
+      try {
+        const res = await fetch(
+          `http://localhost:3001/groups/invite/${inviteCode}`,
+        );
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
-        setMessage(data.error.message);
-        return;
+        if (!res.ok) {
+          setMessage(
+            data.error?.message || data.message || "Unable to load invite",
+          );
+          return;
+        }
+
+        setGroup(data.group);
+      } catch (err) {
+        console.error(err);
+        setMessage("Unable to connect to the server");
       }
-
-      setGroup(data.group);
     }
 
     fetchInvite();
   }, [inviteCode]);
 
   const handleJoin = async () => {
-    const token = localStorage.getItem("token");
+    if (loading) return;
 
-    if (!token) {
+    if (!isAuthenticated) {
       localStorage.setItem("pendingInvite", inviteCode);
       navigate("/register");
       return;
     }
 
-    const res = await fetch(
-      `http://localhost:3001/groups/invite/${inviteCode}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
+    try {
+      setJoining(true);
+      setMessage(null);
+
+      const res = await fetch(
+        `http://localhost:3001/groups/invite/${inviteCode}`,
+        {
+          method: "POST",
+          credentials: "include",
         },
-      },
-    );
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-      setMessage(data.error.message);
-      return;
+      if (!res.ok) {
+        setMessage(
+          data.error?.message || data.message || "Unable to join group",
+        );
+        return;
+      }
+
+      localStorage.removeItem("pendingInvite");
+      navigate(`/groups/${data.group.id}`);
+    } catch (err) {
+      console.error(err);
+      setMessage("Unable to connect to the server");
+    } finally {
+      setJoining(false);
     }
-
-    console.log("Joined:", data);
-    localStorage.removeItem("pendingInvite");
-    navigate(`/groups/${data.group.id}`);
   };
 
   if (message) {

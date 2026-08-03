@@ -3,57 +3,61 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    async function loadUser() {
+      try {
+        const res = await fetch("http://localhost:3001/users/profile", {
+          credentials: "include",
+        });
 
-    if (!storedToken) {
-      setLoading(false);
-      return;
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+
+        const data = await res.json();
+
+        setUser(data);
+      } catch (err) {
+        console.error(err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    setToken(storedToken);
-
-    fetch("http://localhost:3001/users/profile", {
-      headers: {
-        Authorization: `Bearer ${storedToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.id) {
-          setUser(data);
-        } else {
-          localStorage.removeItem("token");
-        }
-      })
-      .finally(() => setLoading(false));
+    loadUser();
   }, []);
 
   const login = (data) => {
-    localStorage.setItem("token", data.token);
-    setToken(data.token);
     setUser(data.user);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("pendingInvite");
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await fetch("http://localhost:3001/users/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.log("Logout failed:", err);
+    } finally {
+      localStorage.removeItem("pendingInvite");
+      setUser(null);
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
         login,
         logout,
         loading,
-        isAuthenticated: !!user,
+        isAuthenticated: Boolean(user),
       }}
     >
       {children}

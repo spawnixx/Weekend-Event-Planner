@@ -33,9 +33,7 @@ function GroupView() {
 
   const fetchEvents = async () => {
     const res = await fetch(`http://localhost:3001/groups/${id}/events`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.token}`,
-      },
+      credentials: "include",
     });
     const data = await res.json();
 
@@ -51,9 +49,7 @@ function GroupView() {
     const fetchGroup = async () => {
       const res = await fetch(`http://localhost:3001/groups/${id}`, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.token}`,
-        },
+        credentials: "include",
       });
       const data = await res.json();
       if (!res.ok) {

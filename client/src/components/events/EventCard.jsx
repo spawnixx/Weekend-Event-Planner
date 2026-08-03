@@ -28,8 +28,8 @@ export default function EventCard({ event, onEventChange, isOwner }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.token}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           vote: value,
         }),
@@ -60,9 +60,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
       `http://localhost:3001/groups/${event.groupid}/events/${event.id}`,
       {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.token}`,
-        },
+        credentials: "include",
       },
     );
     const data = await res.json();

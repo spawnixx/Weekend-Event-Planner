@@ -25,9 +25,9 @@ export async function register(req, res, next) {
       password: hashedPassword,
     });
     const token = createToken(newUser);
+    res.cookie("token", token, cookieOptions);
     return res.status(201).json({
       user: newUser,
-      token,
     });
   } catch (err) {
     return next(err);
@@ -46,16 +46,23 @@ export async function login(req, res, next) {
     if (!existingUser) {
       next(new ExpressError("Invalid Email. Try again", 400));
     }
-    console.log(existingUser);
     const auth = await bcrypt.compare(password, existingUser.password);
     if (!auth) {
       next(ExpressError("Incorrect Password. Try again", 400));
     }
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+      path: "/",
+    };
+
     const token = createToken(existingUser);
-    res.cookie("jwt", token, { httpOnly: true, maxAge: 259200000 });
+    res.cookie("jwt", token, cookieOptions);
     res.status(200).json({
       user: existingUser.id,
-      token,
     });
   } catch (err) {
     next(err);

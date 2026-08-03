@@ -6,12 +6,9 @@ function Groups() {
   const [groups, setGroups] = useState([]);
 
   const fetchGroups = async () => {
-    const token = localStorage.getItem("token");
     const res = await fetch("http://localhost:3001/groups", {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: "include",
     });
     const data = await res.json();
     // console.log("Groups response:", data);

@@ -35,13 +35,13 @@ function JoinGroupModal({ onGroupChange }) {
 
   const onSubmit = async (values) => {
     console.log("submitting code:", values);
-    const token = localStorage.getItem("token");
+
     const res = await fetch("http://localhost:3001/groups/join", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
       body: JSON.stringify(values),
     });
 
