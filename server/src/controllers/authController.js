@@ -89,3 +89,16 @@ export async function updateProfile(req, res, next) {
 
   res.json(updatedUser);
 }
+
+export function logout(req, res) {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/",
+  });
+
+  return res.json({
+    message: "Logged out successfully",
+  });
+}

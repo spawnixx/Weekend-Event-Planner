@@ -59,6 +59,8 @@ CREATE TABLE events (
 
     votingEnds TIMESTAMP,
 
+    proposed_by INTEGER REFERENCES users(id),
+
     status event_status NOT NULL DEFAULT 'proposed'
 );
 

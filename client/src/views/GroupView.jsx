@@ -2,7 +2,7 @@ import EventCard from "@/components/events/EventCard";
 import GroupMemberManager from "@/components/groups/GroupMemberManager";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CreateEventModal from "@/components/events/CreateEventModal";
+import CreateEventForm from "@/components/events/CreateEventForm";
 import {
   Avatar,
   AvatarFallback,
@@ -11,7 +11,9 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import EventSection from "@/components/events/EventSection";
+import TicketmasterBrowser from "@/components/events/TicketmasterBrowser";
 import { useAuth } from "@/context/AuthContext";
+import AddEventModal from "@/components/events/AddEventModal";
 
 function GroupView() {
   const { id } = useParams();
@@ -76,7 +78,11 @@ function GroupView() {
         />
       </section>
       <p>Invite Code: {group.invite_code}</p>
-      <CreateEventModal onEventCreated={fetchEvents} groupId={id} />
+      <AddEventModal
+        groupId={id}
+        groupEvents={events}
+        onEventAdded={fetchEvents}
+      />
       <EventSection
         title="Confirmed Events"
         events={confirmedEvents}

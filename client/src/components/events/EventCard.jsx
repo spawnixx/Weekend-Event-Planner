@@ -82,6 +82,12 @@ export default function EventCard({ event, onEventChange, isOwner }) {
       <Card>
         <CardHeader>
           <CardTitle>{event?.title}</CardTitle>
+          <p className="text-muted-foreground text-sm">
+            Suggested by{" "}
+            {event.proposer
+              ? `${event.proposer.firstName} ${event.proposer.lastName}`
+              : "Former member"}
+          </p>
         </CardHeader>
         <CardContent>
           <p>Starts: {formatDate(event.startdate)}</p>

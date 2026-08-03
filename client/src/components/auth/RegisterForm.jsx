@@ -54,7 +54,6 @@ function RegisterForm() {
     } else {
       navigate("/groups");
     }
-    console.log(data.token);
     toast.success("User Registered:", { description: data.user });
     console.log("User Created:", data.user);
     reset();

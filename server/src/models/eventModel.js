@@ -15,6 +15,7 @@ export class Event {
       eventImageUrl,
       description,
       votingEnds,
+      proposedBy,
     } = eventData;
     const res = await db.query(
       `
@@ -30,8 +31,9 @@ export class Event {
         ticketmasterId,
         eventImageUrl,
         description,
-        votingEnds)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+        votingEnds,
+        proposed_by)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
         RETURNING *
         `,
       [
@@ -47,6 +49,7 @@ export class Event {
         eventImageUrl,
         description,
         votingEnds,
+        proposedBy,
       ],
     );
     return res.rows[0];
@@ -73,6 +76,18 @@ export class Event {
       COUNT(ev.userid) FILTER (WHERE ev.vote = TRUE) AS votes_for,
       COUNT(ev.userid) FILTER (WHERE ev.vote = FALSE) AS votes_against,
 
+
+      CASE
+        WHEN proposer.id IS NULL THEN NULL
+        ELSE json_build_object(
+          'id', proposer.id,
+          'firstName', proposer.firstname,
+          'lastName', proposer.lastname,
+          'name', proposer.firstname || ' ' || proposer.lastname
+        )
+      END AS proposer,
+
+
       json_agg(
         json_build_object(
           'id', u.id,
@@ -91,13 +106,16 @@ export class Event {
     JOIN users u
       ON u.id = gm.user_id
 
+      LEFT JOIN users proposer
+    ON proposer.id = e.proposed_by
+
     LEFT JOIN event_votes ev
       ON ev.eventid = e.id
       AND ev.userid = u.id
 
     WHERE e.id = $1
 
-    GROUP BY e.id
+    GROUP BY e.id, proposer.id
     `,
       [id],
     );
@@ -114,6 +132,16 @@ export class Event {
       COUNT(ev.userid) FILTER (WHERE ev.vote = TRUE) AS votes_for,
       COUNT(ev.userid) FILTER (WHERE ev.vote = FALSE) AS votes_against,
 
+      CASE
+        WHEN proposer.id IS NULL THEN NULL
+        ELSE json_build_object(
+          'id', proposer.id,
+          'firstName', proposer.firstname,
+          'lastName', proposer.lastname,
+          'name', proposer.firstname || ' ' || proposer.lastname
+        )
+      END AS proposer,
+
       json_agg(
         json_build_object(
           'id', u.id,
@@ -132,13 +160,16 @@ export class Event {
     JOIN users u
       ON u.id = gm.user_id
 
+    LEFT JOIN users proposer
+    ON proposer.id = e.proposed_by
+
     LEFT JOIN event_votes ev
       ON ev.eventid = e.id
      AND ev.userid = u.id
 
     WHERE e.groupid = $1
 
-    GROUP BY e.id
+    GROUP BY e.id, proposer.id
 
     ORDER BY e.startdate;
             `,

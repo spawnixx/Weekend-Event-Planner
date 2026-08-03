@@ -4,9 +4,12 @@ import { Event } from "../models/eventModel.js";
 export async function createEvent(req, res, next) {
   try {
     const groupId = req.params.id;
+    const proposedBy = req.user.id;
+
     const newEvent = await Event.createEvent({
       ...req.body,
       groupId,
+      proposedBy,
     });
     return res.status(201).json({
       event: newEvent,

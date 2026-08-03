@@ -5,6 +5,7 @@ import {
   register,
   login,
   updateProfile,
+  logout,
 } from "../controllers/authController.js";
 import { tokenAuth } from "../middleware/tokenAuth.js";
 
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/logout", logout);
 router.get("/profile", tokenAuth, async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
