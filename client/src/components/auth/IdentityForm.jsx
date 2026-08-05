@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateSchema } from "@/lib/updateSchema";
+import { identitySchema } from "@/lib/identitySchema";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +16,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 import { getCurrentUser, updateCurrentUser } from "@/api/authApi";
-function UpdateForm() {
-  const [setUser] = useState(null);
+function IdentityForm() {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const {
     register,
@@ -25,14 +25,11 @@ function UpdateForm() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
-    resolver: zodResolver(updateSchema),
+    resolver: zodResolver(identitySchema),
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
     },
   });
   useEffect(() => {
@@ -47,9 +44,6 @@ function UpdateForm() {
           firstName: profile.firstName ?? profile.firstname ?? "",
           lastName: profile.lastName ?? profile.lastname ?? "",
           email: profile.email ?? "",
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
         });
       } catch (err) {
         console.log("Failed to load profile", err);
@@ -103,29 +97,7 @@ function UpdateForm() {
               {errors.email && <FieldError>{errors.email.message}</FieldError>}
             </Field>
           </FieldGroup>
-          <FieldGroup>
-            <Field>
-              <FieldLabel>Current Password</FieldLabel>
-              <Input type={"password"} {...register("currentPassword")} />
-              {errors.currentPassword && (
-                <FieldError>{errors.currentPassword.message}</FieldError>
-              )}
-            </Field>
-            <Field>
-              <FieldLabel>New Password</FieldLabel>
-              <Input type={"password"} {...register("newPassword")} />
-              {errors.newPassword && (
-                <FieldError>{errors.newPassword.message}</FieldError>
-              )}
-            </Field>
-            <Field>
-              <FieldLabel>Confirm Password</FieldLabel>
-              <Input type={"password"} {...register("confirmPassword")} />
-              {errors.confirmPassword && (
-                <FieldError>{errors.confirmPassword.message}</FieldError>
-              )}
-            </Field>
-          </FieldGroup>
+
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
@@ -135,4 +107,4 @@ function UpdateForm() {
   );
 }
 
-export default UpdateForm;
+export default IdentityForm;

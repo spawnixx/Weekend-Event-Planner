@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { createEvent } from "@/api/eventApi";
 
 function formatDate(date) {
   if (!date) {
@@ -75,26 +76,7 @@ export default function TicketmasterResultCard({
         longitude: event.longitude,
       };
 
-      const res = await fetch(
-        `http://localhost:3001/groups/${groupId}/events`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(eventPayload),
-        },
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(
-          data.error?.message || data.message || "Unable to add event",
-        );
-        return;
-      }
+      const data = await createEvent(groupId, eventPayload);
 
       setAdded(true);
       toast.success("Event added to the group");
@@ -102,7 +84,7 @@ export default function TicketmasterResultCard({
       await onEventAdded?.(data.event);
     } catch (err) {
       console.error(err);
-      toast.error("Unable to connect to the server");
+      toast.error(err.message);
     } finally {
       setAdding(false);
     }

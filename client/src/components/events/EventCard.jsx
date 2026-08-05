@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  CalendarDays,
+  Trash2,
   ChevronDown,
   ChevronUp,
   Clock,
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import VoteBadge from "./VoteBadge";
 import EditEventModal from "./EditEventModal";
 import { voteOnEvent, deleteEvent } from "@/api/eventApi";
+import EventMapDialog from "./EventMapDialog";
 
 export default function EventCard({ event, onEventChange, isOwner }) {
   const { user } = useAuth();
@@ -159,12 +160,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
                 {formattedTime}
               </span>
 
-              {event.location && (
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {event.location}
-                </span>
-              )}
+              {event.location && <EventMapDialog event={event} />}
             </div>
 
             {event.proposer && (
@@ -337,10 +333,22 @@ export default function EventCard({ event, onEventChange, isOwner }) {
             )}
 
             {isOwner && (
-              <div className="flex justify-end border-t border-[#E4E4E1] pt-4">
+              <div className="mt-4 flex gap-2">
                 <EditEventModal event={event} onEventChange={onEventChange} />
-                <Button variant="destructive" onClick={handleDelete}>
-                  DELETE
+
+                <Button
+                  variant="outline"
+                  onClick={handleDelete}
+                  className="
+      flex-1
+      border-red-200
+      text-red-600
+      hover:border-red-500
+      hover:bg-red-50
+    "
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
                 </Button>
               </div>
             )}

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TicketmasterResultCard from "./TicketmasterResultCard";
 import { toast } from "sonner";
-
+import { searchTicketmasterEvents } from "@/api/ticketmasterApi";
 export default function TicketmasterBrowser({
   groupId,
   groupEvents = [],
@@ -11,6 +11,8 @@ export default function TicketmasterBrowser({
 }) {
   const [keyword, setKeyword] = useState("");
   const [city, setCity] = useState("");
+  const [eventDateFrom, setEventDateFrom] = useState("");
+  const [eventDateTo, setEventDateTo] = useState("");
   const [results, setResults] = useState([]);
   const [pageData, setPageData] = useState({
     number: 0,
@@ -52,23 +54,13 @@ export default function TicketmasterBrowser({
         params.set("city", trimmedCity);
       }
 
-      const res = await fetch(
-        `http://localhost:3001/ticketmaster/events?${params}`,
-        {
-          credentials: "include",
-        },
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(
-          data.error?.message ||
-            data.message ||
-            "Unable to search Ticketmaster",
-        );
-        return;
-      }
+      const data = await searchTicketmasterEvents({
+        keyword: trimmedKeyword,
+        city: trimmedCity,
+        eventDateFrom,
+        eventDateTo,
+        page,
+      });
 
       setResults(data.events ?? []);
       setPageData({
@@ -145,6 +137,36 @@ export default function TicketmasterBrowser({
             value={city}
             onChange={(event) => setCity(event.target.value)}
             placeholder="Atlanta"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="event-date-from"
+            className="mb-1.5 block text-xs font-semibold"
+          >
+            Events from
+          </label>
+
+          <Input
+            id="event-date-from"
+            type="date"
+            value={eventDateFrom}
+            onChange={(e) => setEventDateFrom(e.target.value)}
+          />
+
+          <label
+            htmlFor="event-date-to"
+            className="mb-1.5 block text-xs font-semibold"
+          >
+            Through
+          </label>
+
+          <Input
+            id="event-date-to"
+            type="date"
+            value={eventDateTo}
+            min={eventDateFrom || undefined}
+            onChange={(e) => setEventDateTo(e.target.value)}
           />
         </div>
 
