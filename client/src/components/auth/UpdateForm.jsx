@@ -89,7 +89,7 @@ function UpdateForm() {
 
   const submitHandler = handleSubmit(onSubmit);
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={submitHandler} autoComplete="false">
       <FieldGroup>
         <FieldSet>
           <FieldLegend>Update Profile</FieldLegend>

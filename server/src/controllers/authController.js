@@ -61,8 +61,11 @@ export async function login(req, res, next) {
 
     const token = createToken(existingUser);
     res.cookie("jwt", token, cookieOptions);
-    res.status(200).json({
-      user: existingUser.id,
+    return res.status(200).json({
+      user: {
+        id: existingUser.id,
+        firstName: existingUser.firstName,
+      },
     });
   } catch (err) {
     next(err);

@@ -67,10 +67,6 @@ function LoginForm() {
     <form onSubmit={submitHandler}>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>Welcome Back</FieldLegend>
-
-          <FieldDescription>Sign in to your account</FieldDescription>
-
           <Field>
             <FieldLabel>Email</FieldLabel>
             <Input placeholder="YourEmail@email.com" {...register("email")} />

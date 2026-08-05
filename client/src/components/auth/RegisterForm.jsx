@@ -63,12 +63,6 @@ function RegisterForm() {
     <form onSubmit={submitHandler}>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>Create Account</FieldLegend>
-
-          <FieldDescription>
-            Join and start planning your next event
-          </FieldDescription>
-
           <FieldGroup>
             <Field>
               <FieldLabel>First Name</FieldLabel>

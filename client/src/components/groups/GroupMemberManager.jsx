@@ -1,24 +1,39 @@
-import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Trash2, UserRound, Users } from "lucide-react";
 import { toast } from "sonner";
+
+function getInitials(member) {
+  const firstInitial = member.firstName?.[0] ?? "";
+  const lastInitial = member.lastName?.[0] ?? "";
+
+  return `${firstInitial}${lastInitial}`.toUpperCase();
+}
 
 export default function GroupMemberManager({ group, setGroup, members = [] }) {
   const { user } = useAuth();
 
-  const [error, setError] = useState("");
   const [removingMemberId, setRemovingMemberId] = useState(null);
+
   const currentMember = members.find((member) => member?.id === user?.id);
+
   const isOwner = currentMember?.role === "owner";
 
-  const handleRemoveMember = async (memberId) => {
-    if (!group.id || !memberId) {
-      setError("Missing group or member information");
+  async function handleRemoveMember(memberId) {
+    if (!group?.id || !memberId) {
+      toast.error("Missing group or member information");
       return;
     }
+
     try {
-      setError("");
       setRemovingMemberId(memberId);
 
       const res = await fetch(
@@ -28,54 +43,144 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
           credentials: "include",
         },
       );
+
       const data = await res.json();
-      toast.success("User removed");
+
       if (!res.ok) {
-        toast.error(data.error);
-        throw new Error(data.error?.message || "Unable to remove member");
+        throw new Error(
+          data.error?.message || data.message || "Unable to remove member",
+        );
       }
+
       setGroup((currentGroup) => ({
         ...currentGroup,
         members: (currentGroup.members ?? []).filter(
-          (member) => member?.id !== memberId,
+          (member) => member.id !== memberId,
         ),
       }));
+
+      toast.success("Member removed");
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      toast.error(err.message);
     } finally {
       setRemovingMemberId(null);
     }
-  };
+  }
 
   return (
-    <section className="grid gap-4 md:grid-cols-8">
-      {error && <p>{error}</p>}
-      <ul>
-        {members.map((member) => {
-          const isRemoving = removingMemberId === member.id;
-          const canRemove =
-            isOwner && member.role !== "owner" && member.id !== user?.id;
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="gap-2">
+          <Users className="h-4 w-4" />
+          Members
+          <span className="font-mono-ui text-xs text-muted-foreground">
+            {members.length}
+          </span>
+        </Button>
+      </PopoverTrigger>
 
-          return (
-            <li key={member.id}>
-              <Card>
-                <strong>
-                  {member.firstName} {member.lastName[0]}
-                </strong>
+      <PopoverContent align="end" className="w-[340px] border-[#E4E4E1] p-0">
+        <div className="border-b border-[#E4E4E1] px-4 py-3">
+          <h3 className="font-display text-lg font-semibold">Group members</h3>
 
-                {canRemove && (
-                  <Button
-                    onClick={() => handleRemoveMember(member.id)}
-                    disabled={isRemoving}
+          <p className="mt-1 text-xs text-muted-foreground">
+            {members.length} {members.length === 1 ? "member" : "members"} in
+            this group
+          </p>
+        </div>
+
+        <div className="max-h-80 overflow-y-auto p-2">
+          {members.length === 0 ? (
+            <div className="flex flex-col items-center px-4 py-8 text-center">
+              <UserRound className="mb-2 h-5 w-5 text-muted-foreground" />
+
+              <p className="text-sm text-muted-foreground">
+                No group members found.
+              </p>
+            </div>
+          ) : (
+            <ul className="space-y-1">
+              {members.map((member) => {
+                const isRemoving = removingMemberId === member.id;
+
+                const canRemove =
+                  isOwner && member.role !== "owner" && member.id !== user?.id;
+
+                return (
+                  <li
+                    key={member.id}
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-[#F1F0EC]"
                   >
-                    {isRemoving ? "Removing..." : "Remove"}
-                  </Button>
-                )}
-              </Card>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-[#F1F0EC] text-xs font-semibold text-[#17171A]">
+                        {getInitials(member)}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-semibold">
+                          {member.firstName} {member.lastName}
+                        </p>
+
+                        {member.id === user?.id && (
+                          <span className="text-xs text-muted-foreground">
+                            You
+                          </span>
+                        )}
+                      </div>
+
+                      {member.email && (
+                        <p className="truncate text-xs text-muted-foreground">
+                          {member.email}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                      <Badge
+                        variant={
+                          member.role === "owner" ? "default" : "outline"
+                        }
+                        className={
+                          member.role === "owner"
+                            ? "font-mono-ui bg-[#E8492C] text-[9px] uppercase tracking-wider text-white"
+                            : "font-mono-ui text-[9px] uppercase tracking-wider text-muted-foreground"
+                        }
+                      >
+                        {member.role}
+                      </Badge>
+
+                      {canRemove && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Remove ${member.firstName} ${member.lastName}`}
+                          disabled={isRemoving}
+                          onClick={() => handleRemoveMember(member.id)}
+                          className="h-8 w-8 text-muted-foreground hover:bg-[#FBEAE6] hover:text-[#C63A1E]"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        {!isOwner && (
+          <div className="border-t border-[#E4E4E1] px-4 py-3">
+            <p className="text-xs text-muted-foreground">
+              Only the group owner can remove members.
+            </p>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }

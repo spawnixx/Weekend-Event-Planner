@@ -1,29 +1,28 @@
 import EventCard from "@/components/events/EventCard";
 export default function EventSection({
-  title,
-  emptyMessage,
   events,
+  emptyMessage,
   onEventChange,
   isOwner,
 }) {
-  return (
-    <section className="mt-8">
-      <h2 className="mb-4 text-2xl font-semibold">{title}</h2>
+  if (events.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed px-6 py-12 text-center">
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+      </div>
+    );
+  }
 
-      {events.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          {events.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onEventChange={onEventChange}
-              isOwner={isOwner}
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-muted-foreground">{emptyMessage}</p>
-      )}
-    </section>
+  return (
+    <div className="space-y-3">
+      {events.map((event) => (
+        <EventCard
+          key={event.id}
+          event={event}
+          onEventChange={onEventChange}
+          isOwner={isOwner}
+        />
+      ))}
+    </div>
   );
 }

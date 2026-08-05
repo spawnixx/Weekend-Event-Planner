@@ -3,12 +3,20 @@ import { Button } from "@/components/ui/button";
 
 import { useAuth } from "@/context/AuthContext";
 function NavBar() {
-  const { logout, user } = useAuth();
+  const { logout, user, loading } = useAuth();
   const navigate = useNavigate();
+
+  if (loading || !user) {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/auth", {
+      state: {
+        tab: "login",
+      },
+    });
   };
   return (
     <nav className="flex items-center gap-4">

@@ -43,7 +43,11 @@ function JoinGroup() {
 
     if (!isAuthenticated) {
       localStorage.setItem("pendingInvite", inviteCode);
-      navigate("/register");
+      navigate("/auth", {
+        state: {
+          tab: "register",
+        },
+      });
       return;
     }
 
