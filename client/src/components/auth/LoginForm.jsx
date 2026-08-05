@@ -1,16 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { loginUser } from "@/api/authApi";
 import { loginSchema } from "@/lib/loginSchema";
 
 import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
 import { toast } from "sonner";
@@ -31,35 +29,24 @@ function LoginForm() {
 
   const onSubmit = async (values) => {
     try {
-      const res = await fetch("http://localhost:3001/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(values),
-      });
+      const data = await loginUser(values);
 
-      const data = await res.json();
+      login(data.user);
 
-      if (!res.ok) {
-        console.log(data.message || res.statusText);
-        toast.error(data.message);
-        return;
-      }
-
-      login(data);
       const pendingInvite = localStorage.getItem("pendingInvite");
+
       if (pendingInvite) {
         navigate(`/join/${pendingInvite}`);
       } else {
         navigate("/groups");
       }
-      console.log("Logged in:", data.user);
+
+      console.log("Logged in:", data);
       toast.success("Logged in");
       reset();
     } catch (err) {
       console.log(err);
+      toast.error(err.message);
     }
   };
   const submitHandler = handleSubmit(onSubmit);

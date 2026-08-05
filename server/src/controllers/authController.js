@@ -3,17 +3,25 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { createToken } from "../utils/createToken.js";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 3 * 24 * 60 * 60 * 1000,
+  path: "/",
+};
+
 export async function register(req, res, next) {
   try {
     const { firstName, lastName, email, password } = req.body;
     if (!firstName || !lastName || !email || !password) {
-      return next(new ExpressError("All fields are required", 400));
+      throw new ExpressError("All fields are required", 400);
     }
 
     const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
-      return next(new ExpressError("Email already in use.", 400));
+      throw new ExpressError("Email already in use.", 400);
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -25,9 +33,12 @@ export async function register(req, res, next) {
       password: hashedPassword,
     });
     const token = createToken(newUser);
-    res.cookie("token", token, cookieOptions);
+    res.cookie("jwt", token, cookieOptions);
     return res.status(201).json({
-      user: newUser,
+      user: {
+        id: newUser.id,
+        firstname: newUser.firstName ?? newUser.firstname,
+      },
     });
   } catch (err) {
     return next(err);
@@ -39,32 +50,24 @@ export async function login(req, res, next) {
 
   try {
     if (!email || !password) {
-      next(new ExpressError("Email and password required", 400));
+      throw ExpressError("Email and password required", 400);
     }
     const existingUser = await User.findByEmail(email);
 
     if (!existingUser) {
-      next(new ExpressError("Invalid Email. Try again", 400));
+      throw ExpressError("Invalid Email. Try again", 400);
     }
     const auth = await bcrypt.compare(password, existingUser.password);
     if (!auth) {
-      next(ExpressError("Incorrect Password. Try again", 400));
+      throw new ExpressError("Incorrect Password. Try again", 400);
     }
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-      path: "/",
-    };
 
     const token = createToken(existingUser);
     res.cookie("jwt", token, cookieOptions);
     return res.status(200).json({
       user: {
         id: existingUser.id,
-        firstName: existingUser.firstName,
+        firstName: existingUser.firstName ?? existingUser.firstname,
       },
     });
   } catch (err) {
@@ -73,24 +76,29 @@ export async function login(req, res, next) {
 }
 
 export async function updateProfile(req, res, next) {
-  const { firstName, lastName, email, currentPassword, newPassword } = req.body;
-  const userId = req.user.id;
-  if (newPassword) {
-    const validPassword = await User.verifyPassword(userId, currentPassword);
-    if (!validPassword) {
-      return next(new ExpressError("Current password is incorrect", 401));
+  try {
+    const { firstName, lastName, email, currentPassword, newPassword } =
+      req.body;
+    const userId = req.user.id;
+    if (newPassword) {
+      const validPassword = await User.verifyPassword(userId, currentPassword);
+      if (!validPassword) {
+        throw ExpressError("Current password is incorrect", 401);
+      }
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      await User.updatePassword(userId, hashedPassword);
     }
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await User.updatePassword(userId, hashedPassword);
-  }
-  const updatedUser = await User.updateUser({
-    id: userId,
-    firstName,
-    lastName,
-    email,
-  });
+    const updatedUser = await User.updateUser({
+      id: userId,
+      firstName,
+      lastName,
+      email,
+    });
 
-  res.json(updatedUser);
+    res.json(updatedUser);
+  } catch (err) {
+    return next(err);
+  }
 }
 
 export function logout(req, res) {

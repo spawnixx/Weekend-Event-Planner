@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+import { updateEvent } from "@/api/eventApi";
 
 export default function EditEventModal({ event, onEventChange }) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -52,22 +53,9 @@ export default function EditEventModal({ event, onEventChange }) {
 
   async function onSubmit(values) {
     try {
-      const res = await fetch(
-        `http://localhost:3001/groups/${event.groupid}/events/${event.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(values),
-        },
-      );
-
-      const data = await res.json();
+      const data = await updateEvent(event.groupid, event.id, values);
 
       if (!res.ok) {
-        toast.error(data.error || "Unable to update event");
         return;
       }
 
@@ -78,6 +66,7 @@ export default function EditEventModal({ event, onEventChange }) {
       setDialogOpen(false);
     } catch (err) {
       console.error(err);
+      toast.error(err.message || "Unable to update event");
     }
   }
 

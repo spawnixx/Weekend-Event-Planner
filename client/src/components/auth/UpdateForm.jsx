@@ -15,8 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
+import { getCurrentUser, updateCurrentUser } from "@/api/authApi";
 function UpdateForm() {
-  const [user, setUser] = useState(null);
+  const [setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const {
     register,
@@ -37,22 +38,19 @@ function UpdateForm() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:3001/users/profile", {
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data);
+        const data = await getCurrentUser();
 
-          reset({
-            firstName: data.firstname || "",
-            lastName: data.lastname || "",
-            email: data.email || "",
-            currentPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-          });
-        }
+        setUser(data);
+        const profile = data.user ?? data;
+
+        reset({
+          firstName: profile.firstName ?? profile.firstname ?? "",
+          lastName: profile.lastName ?? profile.lastname ?? "",
+          email: profile.email ?? "",
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
       } catch (err) {
         console.log("Failed to load profile", err);
       } finally {
@@ -62,26 +60,17 @@ function UpdateForm() {
     fetchUser();
   }, [reset]);
   const onSubmit = async (values) => {
-    const res = await fetch("http://localhost:3001/users/profile", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(values),
-    });
+    try {
+      const data = await updateCurrentUser(values);
 
-    const data = await res.json();
-    if (!res.ok) {
-      console.log(data.message);
-      toast.error(data.message);
-      return;
+      console.log("Profile Updated:", data);
+      toast.success("Profile Updated!");
+      setUser(data);
+      reset(data);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
     }
-
-    console.log("Profile Updated:", data);
-    toast.success("Profile Updated!");
-    setUser(data);
-    reset(data);
   };
 
   /// Change to icon (NTH)

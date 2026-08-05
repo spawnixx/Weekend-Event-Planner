@@ -22,10 +22,10 @@ function NavBar() {
     <nav className="flex items-center gap-4">
       {user && (
         <span className="text-sm text-muted-foreground">
-          Welcome, {user.firstname}
+          Welcome, {user?.firstName || user?.firstname}
         </span>
       )}
-      <Link to="/">Home</Link>
+
       {user ? (
         <>
           <Link to="/groups">Groups</Link>

@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, UserRound, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -113,7 +114,9 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
                     className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-[#F1F0EC]"
                   >
                     <Avatar className="h-9 w-9">
-                      <AvatarFallback className="bg-[#F1F0EC] text-xs font-semibold text-[#17171A]">
+                      <AvatarFallback
+                        className={`${getAvatarColor(member.id)} font-semibold`}
+                      >
                         {getInitials(member)}
                       </AvatarFallback>
                     </Avatar>

@@ -1,50 +1,146 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronRight, KeyRound, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { ArrowRight, CalendarClock, Plus } from "lucide-react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+} from "@/components/ui/avatar";
+import { getAvatarColor } from "@/lib/avatarColors";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 export default function GroupCard({ group }) {
-  const memberCount = group?.members?.length;
+  const navigate = useNavigate();
 
+  const members = group.members ?? [];
+  const actionableCount = Number(group.actionable_event_count ?? 0);
+  const proposedCount = Number(group.proposed_event_count ?? 0);
+
+  const visibleMembers = members.slice(0, 4);
+  const hiddenMemberCount = Math.max(members.length - visibleMembers.length, 0);
+
+  function handleOpenGroup() {
+    navigate(`/groups/${group.id}`);
+  }
   return (
-    <Link
-      to={`/groups/${group.id}`}
-      className="group block rounded-xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/30"
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={handleOpenGroup}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          handleOpenGroup();
+        }
+      }}
+      className="group cursor-pointer rounded-xl border-[#E4E4E1] bg-white shadow-none transition-all duration-200 hover:-translate-y-0.5 hover:border-[#E8492C]/40 hover:shadow-md"
     >
-      <Card className="h-full cursor-pointer gap-0 rounded-xl border-border bg-card py-0 shadow-none transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
-        <CardHeader className="flex-row items-start justify-between gap-4 p-5">
-          <div className="min-w-0">
-            <CardTitle className="truncate font-heading text-xl font-semibold">
-              {group.name}
-            </CardTitle>
-          </div>
+      <CardHeader>
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="font-display text-xl font-semibold">
+            {group.name}
+          </CardTitle>
 
-          <ChevronRight className="mt-1 size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
-        </CardHeader>
+          <Badge
+            variant={group.role === "owner" ? "default" : "outline"}
+            className={
+              group.role === "owner"
+                ? "font-mono-ui bg-[#E8492C] text-[9px] uppercase tracking-wider text-white"
+                : "font-mono-ui text-[9px] uppercase tracking-wider"
+            }
+          >
+            {group.role}
+          </Badge>
+        </div>
+      </CardHeader>
 
-        <CardContent className="p-5 pt-0">
-          <div className="flex items-center justify-between gap-3 border-t pt-4">
-            {memberCount !== undefined ? (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Users className="size-4" />
+      <CardContent className="space-y-5">
+        <div className="flex items-center justify-between">
+          <AvatarGroup>
+            {visibleMembers.map((member) => (
+              <Avatar key={member.id} className="h-8 w-8 border-2 border-white">
+                <AvatarFallback
+                  className={`${getAvatarColor(member.id)} font-semibold`}
+                >
+                  {member.initials ??
+                    `${member.firstName?.[0] ?? ""}${
+                      member.lastName?.[0] ?? ""
+                    }`}
+                </AvatarFallback>
+              </Avatar>
+            ))}
 
-                <span className="text-xs">
-                  {memberCount} {memberCount === 1 ? "member" : "members"}
-                </span>
-              </div>
-            ) : (
-              <div />
+            {hiddenMemberCount > 0 && (
+              <AvatarGroupCount className="h-8 w-8 text-[10px]">
+                +{hiddenMemberCount}
+              </AvatarGroupCount>
             )}
+          </AvatarGroup>
 
-            <div className="flex items-center gap-1.5 rounded-md bg-muted px-2.5 py-1.5">
-              <KeyRound className="size-3.5 text-muted-foreground" />
+          <span className="font-mono-ui text-[11px] text-muted-foreground">
+            {group.member_count ?? members.length}{" "}
+            {Number(group.member_count ?? members.length) === 1
+              ? "member"
+              : "members"}
+          </span>
+        </div>
 
-              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                {group.invite_code}
-              </span>
+        {actionableCount > 0 ? (
+          <div className="rounded-lg bg-[#FBF2DF] px-4 py-3">
+            <div className="flex items-center gap-2 text-[#966412]">
+              <CalendarClock className="h-4 w-4" />
+
+              <p className="text-sm font-semibold">
+                {actionableCount}{" "}
+                {actionableCount === 1 ? "event needs" : "events need"} your
+                vote
+              </p>
             </div>
+
+            <p className="mt-1 text-xs text-[#7A5A21]">
+              Open the group to review the latest proposals.
+            </p>
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+        ) : proposedCount > 0 ? (
+          <div className="rounded-lg bg-[#E7F2EF] px-4 py-3">
+            <p className="text-sm font-semibold text-[#0F6E5C]">
+              You’re caught up
+            </p>
+
+            <p className="mt-1 text-xs text-[#0F6E5C]/80">
+              You have voted on all active proposals.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-[#E4E4E1] px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Plus className="h-4 w-4 text-[#E8492C]" />
+
+              <p className="text-sm font-semibold">No active events</p>
+            </div>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Open the group and suggest the first event.
+            </p>
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="border-t border-[#E4E4E1] pt-4">
+        <div className="flex w-full items-center justify-between">
+          <span className="font-mono-ui text-[10px] uppercase tracking-wider text-muted-foreground">
+            Invite {group.invite_code}
+          </span>
+
+          <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-[#E8492C]" />
+        </div>
+      </CardFooter>
+    </Card>
   );
 }

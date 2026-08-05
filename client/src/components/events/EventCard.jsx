@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import VoteBadge from "./VoteBadge";
 import EditEventModal from "./EditEventModal";
+import { voteOnEvent, deleteEvent } from "@/api/eventApi";
 
 export default function EventCard({ event, onEventChange, isOwner }) {
   const { user } = useAuth();
@@ -66,28 +67,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
     try {
       setVoting(true);
 
-      const res = await fetch(
-        `http://localhost:3001/groups/${event.groupid}/events/${event.id}/vote`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            vote: value,
-          }),
-        },
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(
-          data.error?.message || data.message || "Unable to save vote",
-        );
-        return;
-      }
+      const data = await voteOnEvent(event.groupid, event.id, value);
 
       toast.success(
         data.event?.status === "confirmed" ? "Event confirmed!" : "Vote saved!",
@@ -99,6 +79,21 @@ export default function EventCard({ event, onEventChange, isOwner }) {
       toast.error("Unable to connect to the server");
     } finally {
       setVoting(false);
+    }
+  }
+  async function handleDelete() {
+    const confirmed = window.confirm(`Delete "${event.title}"?`);
+
+    if (!confirmed) return;
+
+    try {
+      await deleteEvent(event.groupid, event.id);
+
+      toast.success("Event deleted");
+      await onEventChange?.();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
     }
   }
 
@@ -344,6 +339,9 @@ export default function EventCard({ event, onEventChange, isOwner }) {
             {isOwner && (
               <div className="flex justify-end border-t border-[#E4E4E1] pt-4">
                 <EditEventModal event={event} onEventChange={onEventChange} />
+                <Button variant="destructive" onClick={handleDelete}>
+                  DELETE
+                </Button>
               </div>
             )}
           </div>

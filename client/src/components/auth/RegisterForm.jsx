@@ -2,15 +2,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { registerSchema } from "@/lib/registerSchema";
-
+import { registerUser } from "@/api/authApi";
 import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -31,32 +29,26 @@ function RegisterForm() {
   const navigate = useNavigate();
 
   const onSubmit = async (values) => {
-    const res = await fetch("http://localhost:3001/users/register", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    try {
+      const data = await registerUser(values);
 
-    const data = await res.json();
+      login(data);
 
-    if (!res.ok) {
-      toast.error(data.message);
-      console.log(data.message);
-      return;
+      const pendingInvite = localStorage.getItem("pendingInvite");
+      if (pendingInvite) {
+        navigate(`/join/${pendingInvite}`);
+      } else {
+        navigate("/groups");
+      }
+      toast.success("Account created", {
+        description: `Welcome, ${data.user.firstname}!`,
+      });
+      console.log("User Created:", data.user);
+      reset();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
     }
-    login(data);
-    const pendingInvite = localStorage.getItem("pendingInvite");
-    if (pendingInvite) {
-      navigate(`/join/${pendingInvite}`);
-    } else {
-      navigate("/groups");
-    }
-    toast.success("User Registered:", { description: data.user });
-    console.log("User Created:", data.user);
-    reset();
   };
   const submitHandler = handleSubmit(onSubmit);
   return (

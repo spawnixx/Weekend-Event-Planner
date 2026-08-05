@@ -1,15 +1,17 @@
 import GroupMemberManager from "@/components/groups/GroupMemberManager";
 import { useEffect, useState } from "react";
+import { getGroup } from "@/api/groupApi";
+import { getGroupEvents } from "@/api/eventApi";
 import { useParams } from "react-router-dom";
 import {
   Avatar,
   AvatarFallback,
   AvatarGroup,
   AvatarGroupCount,
-  AvatarImage,
 } from "@/components/ui/avatar";
+import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
 import EventSection from "@/components/events/EventSection";
 import { useAuth } from "@/context/AuthContext";
 import AddEventModal from "@/components/events/AddEventModal";
@@ -34,13 +36,11 @@ function GroupView() {
   const closedEvents = events.filter((event) => event.status === "closed");
 
   const fetchEvents = async () => {
-    const res = await fetch(`http://localhost:3001/groups/${id}/events`, {
-      credentials: "include",
-    });
-    const data = await res.json();
-
-    if (res.ok) {
+    try {
+      const data = await getGroupEvents(id);
       setEvents(data.events);
+    } catch (err) {
+      console.error("Failed to load events:", err);
     }
   };
   useEffect(() => {
@@ -49,15 +49,7 @@ function GroupView() {
 
   useEffect(() => {
     const fetchGroup = async () => {
-      const res = await fetch(`http://localhost:3001/groups/${id}`, {
-        method: "GET",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data);
-        return;
-      }
+      const data = await getGroup(id);
       setGroup(data.group);
     };
     fetchGroup();
@@ -84,7 +76,9 @@ function GroupView() {
                 <AvatarGroup>
                   {group.members.slice(0, 4).map((member) => (
                     <Avatar key={member.id}>
-                      <AvatarFallback>
+                      <AvatarFallback
+                        className={`${getAvatarColor(member.id)} font-semibold`}
+                      >
                         {member.firstName[0]}
                         {member.lastName[0]}
                       </AvatarFallback>

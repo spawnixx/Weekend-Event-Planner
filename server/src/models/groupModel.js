@@ -70,12 +70,61 @@ export class Group {
   static async findUserGroups(userId) {
     const res = await db.query(
       `
-      SELECT g.*
-      FROM groups g
-      JOIN group_members gm
-        ON gm.group_id = g.id
-      WHERE gm.user_id = $1
-      ORDER BY g.name
+       SELECT
+      g.*,
+      gm_current.role,
+
+      COUNT(DISTINCT gm.user_id)::INTEGER AS member_count,
+
+      COALESCE(
+        json_agg(
+          DISTINCT jsonb_build_object(
+            'id', u.id,
+            'firstName', u.firstname,
+            'lastName', u.lastname,
+            'initials',
+              LEFT(u.firstname, 1) ||
+              LEFT(u.lastname, 1)
+          )
+        ) FILTER (WHERE u.id IS NOT NULL),
+        '[]'
+      ) AS members,
+
+      COUNT(DISTINCT e.id)
+        FILTER (
+          WHERE e.status = 'proposed'
+            AND ev.userid IS NULL
+        )::INTEGER AS actionable_event_count,
+
+      COUNT(DISTINCT e.id)
+        FILTER (
+          WHERE e.status = 'proposed'
+        )::INTEGER AS proposed_event_count
+
+    FROM groups g
+
+    JOIN group_members gm_current
+      ON gm_current.group_id = g.id
+      AND gm_current.user_id = $1
+
+    LEFT JOIN group_members gm
+      ON gm.group_id = g.id
+
+    LEFT JOIN users u
+      ON u.id = gm.user_id
+
+    LEFT JOIN events e
+      ON e.groupid = g.id
+
+    LEFT JOIN event_votes ev
+      ON ev.eventid = e.id
+      AND ev.userid = $1
+
+    GROUP BY
+      g.id,
+      gm_current.role
+
+    ORDER BY g.name;
       `,
       [userId],
     );

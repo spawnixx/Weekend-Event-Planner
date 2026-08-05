@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { getCurrentUser, logoutUser } from "@/api/authApi";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -9,16 +10,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function loadUser() {
       try {
-        const res = await fetch("http://localhost:3001/users/profile", {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          setUser(null);
-          return;
-        }
-
-        const data = await res.json();
+        const data = await getCurrentUser();
 
         setUser(data);
       } catch (err) {
@@ -33,15 +25,12 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = (data) => {
-    setUser(data.user);
+    setUser(data);
   };
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:3001/users/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await logoutUser();
     } catch (err) {
       console.log("Logout failed:", err);
     } finally {

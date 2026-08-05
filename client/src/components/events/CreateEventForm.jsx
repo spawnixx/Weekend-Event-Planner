@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { toast } from "sonner";
-
+import { createEvent } from "@/api/eventApi";
 export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
   const {
     register,
@@ -22,30 +22,14 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
     resolver: zodResolver(eventSchema),
   });
   const onSubmit = async (values) => {
-    console.log("submitting:", values);
-    const res = await fetch(`http://localhost:3001/groups/${groupId}/events`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(values),
-    });
+    const data = await createEvent(groupId, values);
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      console.log(data.message);
-      toast.error(data.error);
-      return;
-    }
     console.log("Event created:", data);
     toast.success("Event Created:", {
-      description: data,
+      description: data.title,
     });
-    await onEventCreated();
+    await onEventCreated(data);
     reset();
-    setDialogOpen(false);
   };
   const submitHandler = handleSubmit(onSubmit);
   return (

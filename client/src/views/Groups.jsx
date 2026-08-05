@@ -3,6 +3,7 @@ import GroupCard from "@/components/groups/GroupCard";
 import JoinGroupModal from "@/components/groups/JoinGroupModal";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getGroups } from "@/api/groupApi";
 
 function Groups() {
   const [groups, setGroups] = useState([]);
@@ -13,12 +14,7 @@ function Groups() {
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:3001/groups", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const data = await res.json();
+      const data = await getGroups();
       setGroups(data.groups ?? []);
     } finally {
       setIsLoading(false);
