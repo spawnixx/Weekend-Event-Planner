@@ -191,4 +191,17 @@ export class Group {
     );
     return res.rows[0];
   }
+
+  static async deleteGroup(groupId) {
+    const result = await db.query(
+      `
+    DELETE FROM groups
+    WHERE id = $1
+    RETURNING *
+    `,
+      [groupId],
+    );
+
+    return result.rows[0];
+  }
 }

@@ -3,7 +3,7 @@ export function errorHandler(err, req, res, next) {
 
   return res.status(status).json({
     error: {
-      message: err.message || "Internal Server Error",
+      message: err.message,
       status,
     },
   });

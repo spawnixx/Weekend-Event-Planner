@@ -5,6 +5,21 @@ export async function createEvent(req, res, next) {
   try {
     const groupId = req.params.id;
     const proposedBy = req.user.id;
+    const { ticketmasterId } = req.body;
+
+    if (ticketmasterId) {
+      const existing = await Event.findByTicketmasterId(
+        groupId,
+        ticketmasterId,
+      );
+
+      if (existing) {
+        throw new ExpressError(
+          "This Ticketmaster event is already in the group",
+          409,
+        );
+      }
+    }
 
     const newEvent = await Event.createEvent({
       ...req.body,

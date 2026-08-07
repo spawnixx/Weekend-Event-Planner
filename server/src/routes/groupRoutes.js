@@ -8,6 +8,7 @@ import {
   getGroupMembers,
   getInvitePreview,
   removeMember,
+  deleteGroup,
 } from "../controllers/groupController.js";
 import {
   createEvent,
@@ -41,11 +42,7 @@ router.post("/:groupId/events/:eventId/vote", tokenAuth, voteEvent);
 
 router.patch("/:groupId/events/:eventId", tokenAuth, updateEvent);
 
-router.delete(
-  "/:groupId/members/:userId",
-  tokenAuth,
-  requireGroupOwner,
-  removeMember,
-);
+router.delete("/:groupId/members/:userId", tokenAuth, removeMember);
 router.delete("/:groupId/events/:eventId", tokenAuth, deleteEvent);
+router.delete("/:groupId", tokenAuth, requireGroupOwner, deleteGroup);
 export { router };

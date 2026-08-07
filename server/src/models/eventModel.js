@@ -178,6 +178,20 @@ export class Event {
     return res.rows;
   }
 
+  static async findByTicketmasterId(groupId, ticketmasterId) {
+    const result = await db.query(
+      `
+    SELECT *
+    FROM events
+    WHERE groupid = $1
+      AND ticketmasterid = $2
+    `,
+      [groupId, ticketmasterId],
+    );
+
+    return result.rows[0] ?? null;
+  }
+
   static async vote({ eventId, userId, vote }) {
     const res = await db.query(
       `

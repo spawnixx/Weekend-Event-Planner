@@ -105,13 +105,49 @@ export async function getGroupMembers(req, res, next) {
 
 export async function removeMember(req, res, next) {
   try {
-    const removedMember = await Group.removeMember(
-      req.params.groupId,
-      req.params.userId,
-    );
+    const { groupId, userId } = req.params;
+    const currentUserId = req.user.id;
+
+    const currentMember = await Group.getMember(groupId, currentUserId);
+
+    if (!currentMember) {
+      throw new ExpressError("You are not a member of this group.", 403);
+    }
+
+    const isOwner = currentMember.role === "owner";
+
+    if (!isOwner && Number(userId) !== currentUserId) {
+      throw new ExpressError("You can only leave the group yourself.", 403);
+    }
+
+    if (isOwner && Number(userId) === currentUserId) {
+      throw new ExpressError("The group owner cannot leave the group.", 400);
+    }
+
+    await Group.removeMember(groupId, userId);
+
     return res.json({
       message: "Member removed",
       userId: removedMember.user_id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function deleteGroup(req, res, next) {
+  try {
+    const { groupId } = req.params;
+
+    const deletedGroup = await Group.deleteGroup(groupId);
+
+    if (!deletedGroup) {
+      throw new ExpressError("Group not found", 404);
+    }
+
+    return res.json({
+      message: "Group deleted successfully",
+      group: deletedGroup,
     });
   } catch (err) {
     return next(err);

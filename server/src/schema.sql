@@ -15,7 +15,7 @@ CREATE TABLE groups (
  
     owner_id INTEGER NOT NULL REFERENCES users(id),
 
-    invite_code CHAR(8) NOT NULL UNIQUE,
+    invite_code CHAR(8) NOT NULL UNIQUE
     
 );
 
@@ -27,7 +27,7 @@ CREATE TYPE member_role AS ENUM (
 CREATE TABLE group_members (
   userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
-  role member_role NOT NULL DEFAULT 'member';
+  role member_role NOT NULL DEFAULT 'member',
   
   PRIMARY KEY (userId, groupId)
 );
@@ -59,10 +59,14 @@ CREATE TABLE events (
 
     votingEnds TIMESTAMP,
 
-    proposed_by INTEGER REFERENCES users(id),
+    proposed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
 
     status event_status NOT NULL DEFAULT 'proposed'
 );
+
+CREATE UNIQUE INDEX unique_group_ticketmaster_event
+ON events (groupid, ticketmasterid)
+WHERE ticketmasterid IS NOT NULL;
 
 CREATE TABLE event_votes (
     eventId INTEGER REFERENCES events(id) ON DELETE CASCADE,

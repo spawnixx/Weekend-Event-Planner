@@ -21,7 +21,7 @@ export async function register(req, res, next) {
     const existingUser = await User.findByEmail(email);
 
     if (existingUser) {
-      throw new ExpressError("Email already in use.", 400);
+      return next(new ExpressError("Email already in use.", 400));
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -38,6 +38,8 @@ export async function register(req, res, next) {
       user: {
         id: newUser.id,
         firstname: newUser.firstName ?? newUser.firstname,
+        lastname: newUser.lastname,
+        email: newUser.email,
       },
     });
   } catch (err) {
@@ -50,16 +52,16 @@ export async function login(req, res, next) {
 
   try {
     if (!email || !password) {
-      throw ExpressError("Email and password required", 400);
+      return next(new ExpressError("Email and password required", 400));
     }
     const existingUser = await User.findByEmail(email);
 
     if (!existingUser) {
-      throw ExpressError("Invalid Email. Try again", 400);
+      return next(new ExpressError("Invalid Email. Try again", 400));
     }
     const auth = await bcrypt.compare(password, existingUser.password);
     if (!auth) {
-      throw new ExpressError("Incorrect Password. Try again", 400);
+      return next(new ExpressError("Incorrect Password. Try again", 400));
     }
 
     const token = createToken(existingUser);
@@ -112,4 +114,17 @@ export function logout(req, res) {
   return res.json({
     message: "Logged out successfully",
   });
+}
+export async function getProfile(req, res, next) {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return next(new ExpressError("User not found", 404));
+    }
+
+    return res.json(user);
+  } catch (err) {
+    return next(err);
+  }
 }
