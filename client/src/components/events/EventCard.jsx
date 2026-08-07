@@ -113,7 +113,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
   return (
     <Card className="overflow-hidden rounded-xl border-[#E4E4E1] bg-white shadow-none transition-shadow hover:shadow-sm">
       {event.eventimageurl && (
-        <div className="aspect-[16/7] overflow-hidden">
+        <div className="aspect-16/7 overflow-hidden">
           <img
             src={event.eventimageurl}
             alt={event.title}
@@ -124,7 +124,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
 
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-start gap-4">
-          <div className="flex h-[60px] w-14 shrink-0 flex-col items-center justify-center rounded-lg border border-[#E4E4E1] bg-[#F1F0EC]">
+          <div className="flex h-15 w-14 shrink-0 flex-col items-center justify-center rounded-lg border border-[#E4E4E1] bg-[#F1F0EC]">
             <span className="font-mono-ui text-[9px] font-bold uppercase tracking-wider text-[#E8492C]">
               {month}
             </span>
@@ -222,7 +222,15 @@ export default function EventCard({ event, onEventChange, isOwner }) {
                 Voting closed
               </Badge>
             )}
+            <div>
+              <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+                Voting ends
+              </p>
 
+              <p className="mt-1 text-[#17171A]">
+                {formatDate(event.votingends)}
+              </p>
+            </div>
             <Button
               type="button"
               variant="ghost"
@@ -281,16 +289,6 @@ export default function EventCard({ event, onEventChange, isOwner }) {
 
                 <p className="mt-1 text-[#17171A]">
                   {formatDate(event.enddate)}
-                </p>
-              </div>
-
-              <div>
-                <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
-                  Voting ends
-                </p>
-
-                <p className="mt-1 text-[#17171A]">
-                  {formatDate(event.votingends)}
                 </p>
               </div>
 

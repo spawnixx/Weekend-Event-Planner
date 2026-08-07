@@ -2,7 +2,7 @@ import GroupMemberManager from "@/components/groups/GroupMemberManager";
 import { useEffect, useState } from "react";
 import { getGroup } from "@/api/groupApi";
 import { getGroupEvents } from "@/api/eventApi";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Avatar,
   AvatarFallback,
@@ -16,12 +16,15 @@ import EventSection from "@/components/events/EventSection";
 import { useAuth } from "@/context/AuthContext";
 import AddEventModal from "@/components/events/AddEventModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 function GroupView() {
   const { id } = useParams();
   const [group, setGroup] = useState(null);
   const [events, setEvents] = useState([]);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const currentMember = group?.members?.find(
     (member) => member.id === user?.id,
@@ -71,7 +74,7 @@ function GroupView() {
               <h1 className="font-display text-3xl font-semibold tracking-tight">
                 {group.name}
               </h1>
-
+              <div></div>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <AvatarGroup>
                   {group.members.slice(0, 4).map((member) => (
@@ -111,6 +114,14 @@ function GroupView() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
+            <Button
+              variant="link"
+              className="mb-4 px-0 text-muted-foreground"
+              onClick={() => navigate("/groups")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Groups
+            </Button>
             <AddEventModal
               groupId={id}
               groupEvents={events}

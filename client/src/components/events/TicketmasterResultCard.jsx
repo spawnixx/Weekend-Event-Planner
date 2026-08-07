@@ -25,23 +25,29 @@ function formatDate(date) {
 
 function createDefaultVotingDeadline(startDate) {
   const now = new Date();
-  const proposedDeadline = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-
-  if (!startDate) {
-    return proposedDeadline.toISOString();
-  }
-
   const eventDate = new Date(startDate);
 
   if (Number.isNaN(eventDate.getTime())) {
-    return proposedDeadline.toISOString();
+    return new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString();
   }
 
-  const oneDayBeforeEvent = new Date(eventDate.getTime() - 24 * 60 * 60 * 1000);
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  return new Date(
-    Math.min(proposedDeadline.getTime(), oneDayBeforeEvent.getTime()),
-  ).toISOString();
+  const daysUntilEvent = (eventDate.getTime() - now.getTime()) / MS_PER_DAY;
+
+  let deadline;
+
+  if (daysUntilEvent >= 14) {
+    deadline = new Date(now.getTime() + 7 * MS_PER_DAY);
+  } else if (daysUntilEvent >= 7) {
+    deadline = new Date(now.getTime() + 4 * MS_PER_DAY);
+  } else if (daysUntilEvent >= 3) {
+    deadline = new Date(eventDate.getTime() - 1 * MS_PER_DAY);
+  } else {
+    deadline = new Date(eventDate.getTime() - 12 * 60 * 60 * 1000);
+  }
+
+  return deadline.toISOString();
 }
 
 export default function TicketmasterResultCard({
@@ -68,7 +74,7 @@ export default function TicketmasterResultCard({
         startDate: event.startDate,
         endDate: event.endDate ?? null,
         location: event.location,
-        description: event.description,
+        description: event.description || "No description available.",
         votingEnds: createDefaultVotingDeadline(event.startDate),
         ticketmasterId: event.ticketmasterId,
         eventImageUrl: event.eventImageUrl,
@@ -84,6 +90,13 @@ export default function TicketmasterResultCard({
       await onEventAdded?.(data.event);
     } catch (err) {
       console.error(err);
+
+      if (err.status === 409) {
+        setAdded(true);
+        toast.info("This event is already in the group");
+        return;
+      }
+
       toast.error(err.message);
     } finally {
       setAdding(false);

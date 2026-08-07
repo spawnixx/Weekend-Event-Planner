@@ -39,20 +39,14 @@ export default function TicketmasterBrowser({
       return;
     }
 
+    if (eventDateFrom && eventDateTo && eventDateTo < eventDateFrom) {
+      toast.error(
+        "The final search date must be on or after the first search date",
+      );
+      return;
+    }
     try {
       setLoading(true);
-
-      const params = new URLSearchParams({
-        page: String(page),
-      });
-
-      if (trimmedKeyword) {
-        params.set("keyword", trimmedKeyword);
-      }
-
-      if (trimmedCity) {
-        params.set("city", trimmedCity);
-      }
 
       const data = await searchTicketmasterEvents({
         keyword: trimmedKeyword,
@@ -104,14 +98,11 @@ export default function TicketmasterBrowser({
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]"
-      >
+      <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
         <div>
           <label
             htmlFor="ticketmaster-keyword"
-            className="mb-1 block text-sm font-medium"
+            className="mb-1.5 block text-xs font-semibold"
           >
             Keyword
           </label>
@@ -127,7 +118,7 @@ export default function TicketmasterBrowser({
         <div>
           <label
             htmlFor="ticketmaster-city"
-            className="mb-1 block text-sm font-medium"
+            className="mb-1.5 block text-xs font-semibold"
           >
             City
           </label>
@@ -139,6 +130,7 @@ export default function TicketmasterBrowser({
             placeholder="Atlanta"
           />
         </div>
+
         <div>
           <label
             htmlFor="event-date-from"
@@ -151,14 +143,16 @@ export default function TicketmasterBrowser({
             id="event-date-from"
             type="date"
             value={eventDateFrom}
-            onChange={(e) => setEventDateFrom(e.target.value)}
+            onChange={(event) => setEventDateFrom(event.target.value)}
           />
+        </div>
 
+        <div>
           <label
             htmlFor="event-date-to"
             className="mb-1.5 block text-xs font-semibold"
           >
-            Through
+            Events through
           </label>
 
           <Input
@@ -166,13 +160,36 @@ export default function TicketmasterBrowser({
             type="date"
             value={eventDateTo}
             min={eventDateFrom || undefined}
-            onChange={(e) => setEventDateTo(e.target.value)}
+            onChange={(event) => setEventDateTo(event.target.value)}
           />
         </div>
 
-        <Button type="submit" disabled={loading} className="self-end">
-          {loading ? "Searching..." : "Search"}
-        </Button>
+        <div className="flex gap-2 sm:col-span-2">
+          <Button type="submit" disabled={loading}>
+            {loading ? "Searching..." : "Search"}
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            disabled={loading}
+            onClick={() => {
+              setKeyword("");
+              setCity("");
+              setEventDateFrom("");
+              setEventDateTo("");
+              setResults([]);
+              setHasSearched(false);
+              setPageData({
+                number: 0,
+                totalPages: 0,
+                totalElements: 0,
+              });
+            }}
+          >
+            Clear
+          </Button>
+        </div>
       </form>
 
       {hasSearched && (

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { removeGroupMember, deleteGroup } from "@/api/groupApi";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -9,8 +11,19 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, UserRound, Users } from "lucide-react";
+import { Trash2, UserRound, Users, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function getInitials(member) {
   const firstInitial = member.firstName?.[0] ?? "";
@@ -21,7 +34,7 @@ function getInitials(member) {
 
 export default function GroupMemberManager({ group, setGroup, members = [] }) {
   const { user } = useAuth();
-
+  const navigate = useNavigate();
   const [removingMemberId, setRemovingMemberId] = useState(null);
 
   const currentMember = members.find((member) => member?.id === user?.id);
@@ -37,21 +50,7 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
     try {
       setRemovingMemberId(memberId);
 
-      const res = await fetch(
-        `http://localhost:3001/groups/${group.id}/members/${memberId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(
-          data.error?.message || data.message || "Unable to remove member",
-        );
-      }
+      await removeGroupMember(group.id, memberId);
 
       setGroup((currentGroup) => ({
         ...currentGroup,
@@ -69,6 +68,34 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
     }
   }
 
+  async function handleLeaveGroup() {
+    if (!group?.id || !user?.id) {
+      toast.error("Missing group information");
+      return;
+    }
+
+    try {
+      await removeGroupMember(group.id, user.id);
+
+      toast.success("You left the group");
+      navigate("/groups");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  }
+  async function handleDeleteGroup() {
+    try {
+      await deleteGroup(group.id);
+
+      toast.success("Group deleted");
+      navigate("/groups");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -81,7 +108,7 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent align="end" className="w-[340px] border-[#E4E4E1] p-0">
+      <PopoverContent align="end" className="w-85 border-[#E4E4E1] p-0">
         <div className="border-b border-[#E4E4E1] px-4 py-3">
           <h3 className="font-display text-lg font-semibold">Group members</h3>
 
@@ -177,10 +204,82 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
         </div>
 
         {!isOwner && (
-          <div className="border-t border-[#E4E4E1] px-4 py-3">
-            <p className="text-xs text-muted-foreground">
-              Only the group owner can remove members.
+          <div className="space-y-2 border-t border-[#E4E4E1] p-3">
+            <p className="px-1 text-xs text-muted-foreground">
+              Only the group owner can remove other members.
             </p>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full justify-start gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Leave Group
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Leave {group.name}?</AlertDialogTitle>
+
+                  <AlertDialogDescription>
+                    You will lose access to this group's events and voting. You
+                    will need another invite to join again.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Stay in Group</AlertDialogCancel>
+
+                  <AlertDialogAction
+                    onClick={handleLeaveGroup}
+                    className="bg-red-600 text-white hover:bg-red-700"
+                  >
+                    Leave Group
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
+        {isOwner && (
+          <div className="border-t border-[#E4E4E1] p-3">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full justify-start gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Group
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete {group.name}?</AlertDialogTitle>
+
+                  <AlertDialogDescription>
+                    This will permanently delete the group, its events, votes,
+                    and membership data. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteGroup}
+                    className="bg-red-600 text-white hover:bg-red-700"
+                  >
+                    Delete Group
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
       </PopoverContent>
