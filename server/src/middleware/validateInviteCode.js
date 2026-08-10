@@ -11,7 +11,7 @@ export async function validateInviteCode(req, res, next) {
     }
     const existingGroup = await Group.findByInviteCode(inviteCode);
     if (!existingGroup) {
-      return next(new ExpressError("Invalid invite code. Try Again", 400));
+      return next(new ExpressError("Invalid invite code. Try Again", 404));
     }
     console.log(existingGroup.name);
     const isMember = await Group.memberCheck(existingGroup.id, userId);

@@ -1,4 +1,4 @@
-import { beforeEach, afterAll } from "vitest";
+import { beforeEach } from "vitest";
 import { db } from "../src/db.js";
 
 beforeEach(async () => {
@@ -11,8 +11,4 @@ beforeEach(async () => {
       users
     RESTART IDENTITY CASCADE;
   `);
-});
-
-afterAll(async () => {
-  await db.end();
 });

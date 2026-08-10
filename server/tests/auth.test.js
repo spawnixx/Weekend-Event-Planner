@@ -108,3 +108,119 @@ describe("POST /users/register", () => {
     expect(verify.rows[0].password).not.toBe("password123");
   });
 });
+
+describe("GET /users/profile", () => {
+  it("returns 401 when user is not authenticated", async () => {
+    const res = await request(app).get("/users/profile");
+
+    expect(res.status).toBe(401);
+    expect(res.body.error.message).toBe("Authenticated required");
+  });
+  it("returns the logged-in user", async () => {
+    await createTestUser();
+
+    const agent = request.agent(app);
+
+    const loginRes = await agent.post("/users/login").send({
+      email: "john@test.com",
+      password: "password123",
+    });
+
+    expect(loginRes.status).toBe(200);
+
+    const profileRes = await agent.get("/users/profile");
+
+    expect(profileRes.status).toBe(200);
+
+    expect(profileRes.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        firstname: "John",
+        lastname: "Doe",
+        email: "john@test.com",
+      }),
+    );
+  });
+});
+
+describe("PATCH /users/profile", () => {
+  it("returns 401 when not authenticated", async () => {
+    const res = await request(app).patch("/users/profile").send({
+      firstName: "Jane",
+    });
+
+    expect(res.status).toBe(401);
+  });
+  it("updates identity fields", async () => {
+    await createTestUser();
+
+    const agent = request.agent(app);
+
+    await agent.post("/users/login").send({
+      email: "john@test.com",
+      password: "password123",
+    });
+
+    const res = await agent.patch("/users/profile").send({
+      firstName: "Johnny",
+      lastName: "Doe",
+      email: "johnny@test.com",
+    });
+
+    expect(res.status).toBe(200);
+
+    const updatedUser = res.body;
+
+    expect(updatedUser).toEqual(
+      expect.objectContaining({
+        firstname: "Johnny",
+        lastname: "Doe",
+        email: "johnny@test.com",
+      }),
+    );
+  });
+
+  it("rejects password change with wrong current password", async () => {
+    await createTestUser();
+
+    const agent = request.agent(app);
+
+    await agent.post("/users/login").send({
+      email: "john@test.com",
+      password: "password123",
+    });
+
+    const res = await agent.patch("/users/profile").send({
+      currentPassword: "wrongpassword",
+      newPassword: "newpassword123",
+    });
+
+    expect(res.status).toBe(401);
+    expect(res.body.error.message).toBe("Current password is incorrect");
+  });
+
+  it("changes the password successfully", async () => {
+    await createTestUser();
+
+    const agent = request.agent(app);
+
+    await agent.post("/users/login").send({
+      email: "john@test.com",
+      password: "password123",
+    });
+
+    const res = await agent.patch("/users/profile").send({
+      currentPassword: "password123",
+      newPassword: "newpassword123",
+    });
+
+    expect(res.status).toBe(200);
+
+    const loginWithNewPassword = await request(app).post("/users/login").send({
+      email: "john@test.com",
+      password: "newpassword123",
+    });
+
+    expect(loginWithNewPassword.status).toBe(200);
+  });
+});

@@ -15,7 +15,7 @@ CREATE TABLE groups (
  
     owner_id INTEGER NOT NULL REFERENCES users(id),
 
-    invite_code CHAR(8) NOT NULL UNIQUE
+    invite_code CHAR(6) NOT NULL UNIQUE
     
 );
 

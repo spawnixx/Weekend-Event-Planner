@@ -65,14 +65,10 @@ export async function createGroup(req, res, next) {
       inviteCode: newInvitecode,
     });
 
-    await Group.addMember(newGroup.id, ownerId);
-
-    const inviteLink = `${process.env.FRONTEND_URL}/join/${newInvitecode}`;
+    await Group.addOwner(newGroup.id, ownerId);
 
     return res.status(201).json({
       group: newGroup,
-      inviteCode: newInvitecode,
-      inviteLink,
     });
   } catch (err) {
     return next(err);
@@ -86,7 +82,7 @@ export async function joinByInviteCode(req, res, next) {
     console.log(userId, groupId);
     await Group.addMember(groupId, userId);
 
-    return res.status(201).json({
+    return res.status(200).json({
       group: req.group,
     });
   } catch (err) {

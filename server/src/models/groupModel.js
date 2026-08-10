@@ -131,6 +131,18 @@ export class Group {
     return res.rows;
   }
 
+  static async addOwner(groupId, userId) {
+    const res = await db.query(
+      `
+      INSERT INTO group_members (group_id, user_id, role)
+      Values ($1, $2, 'owner')
+      RETURNING *
+      `,
+      [groupId, userId],
+    );
+    return res.rows[0];
+  }
+
   static async addMember(groupId, userId) {
     const res = await db.query(
       `

@@ -85,7 +85,7 @@ export async function updateProfile(req, res, next) {
     if (newPassword) {
       const validPassword = await User.verifyPassword(userId, currentPassword);
       if (!validPassword) {
-        throw ExpressError("Current password is incorrect", 401);
+        throw new ExpressError("Current password is incorrect", 401);
       }
       const hashedPassword = await bcrypt.hash(newPassword, 12);
       await User.updatePassword(userId, hashedPassword);
