@@ -18,3 +18,10 @@ export function deleteGroup(groupId) {
     method: "DELETE",
   });
 }
+
+export function joinGroup(inviteCode) {
+  return apiRequest("/groups/join", {
+    method: "POST",
+    body: { inviteCode },
+  });
+}

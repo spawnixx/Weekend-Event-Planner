@@ -52,7 +52,7 @@ function RegisterForm() {
   };
   const submitHandler = handleSubmit(onSubmit);
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={submitHandler} className="space-y-6">
       <FieldGroup>
         <FieldSet>
           <FieldGroup>

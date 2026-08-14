@@ -84,17 +84,6 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
       toast.error(err.message);
     }
   }
-  async function handleDeleteGroup() {
-    try {
-      await deleteGroup(group.id);
-
-      toast.success("Group deleted");
-      navigate("/groups");
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message);
-    }
-  }
 
   return (
     <Popover>
@@ -272,7 +261,7 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={handleDeleteGroup}
+                    // onClick={handleDeleteGroup}
                     className="bg-red-600 text-white hover:bg-red-700"
                   >
                     Delete Group

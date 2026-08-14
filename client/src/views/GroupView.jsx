@@ -1,6 +1,6 @@
 import GroupMemberManager from "@/components/groups/GroupMemberManager";
 import { useEffect, useState } from "react";
-import { getGroup } from "@/api/groupApi";
+import { getGroup, deleteGroup } from "@/api/groupApi";
 import { getGroupEvents } from "@/api/eventApi";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -9,6 +9,17 @@ import {
   AvatarGroup,
   AvatarGroupCount,
 } from "@/components/ui/avatar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
 
@@ -17,7 +28,19 @@ import { useAuth } from "@/context/AuthContext";
 import AddEventModal from "@/components/events/AddEventModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
+
+async function handleDeleteGroup() {
+  try {
+    await deleteGroup(group.id);
+
+    toast.success("Group deleted");
+    navigate("/groups");
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message);
+  }
+}
 
 function GroupView() {
   const { id } = useParams();
@@ -65,6 +88,16 @@ function GroupView() {
     <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
         <header className="mb-8">
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button
+              variant="link"
+              className="mb-4 px-0 text-muted-foreground"
+              onClick={() => navigate("/groups")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Groups
+            </Button>
+          </div>
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="font-mono-ui mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
@@ -74,7 +107,6 @@ function GroupView() {
               <h1 className="font-display text-3xl font-semibold tracking-tight">
                 {group.name}
               </h1>
-              <div></div>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <AvatarGroup>
                   {group.members.slice(0, 4).map((member) => (
@@ -94,6 +126,12 @@ function GroupView() {
                     </AvatarGroupCount>
                   )}
                 </AvatarGroup>
+                <Badge
+                  variant={isOwner ? "default" : "outline"}
+                  className="font-mono-ui text-[10px] uppercase tracking-wider"
+                >
+                  {currentMember?.role}
+                </Badge>
 
                 <span className="text-xs text-muted-foreground">
                   <GroupMemberManager
@@ -102,34 +140,55 @@ function GroupView() {
                     setGroup={setGroup}
                   />
                 </span>
+                {isOwner && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full justify-start gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete Group
+                      </Button>
+                    </AlertDialogTrigger>
 
-                <Badge
-                  variant={isOwner ? "default" : "outline"}
-                  className="font-mono-ui text-[10px] uppercase tracking-wider"
-                >
-                  {currentMember?.role}
-                </Badge>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Delete {group.name}?
+                        </AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          This will permanently delete the group, its events,
+                          votes, and membership data. This action cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          // onClick={handleDeleteGroup}
+                          className="bg-red-600 text-white hover:bg-red-700"
+                        >
+                          Delete Group
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
               </div>
             </div>
           </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button
-              variant="link"
-              className="mb-4 px-0 text-muted-foreground"
-              onClick={() => navigate("/groups")}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Groups
-            </Button>
-            <AddEventModal
-              groupId={id}
-              groupEvents={events}
-              onEventAdded={fetchEvents}
-            />
-          </div>
         </header>
-
+        <div>
+          <AddEventModal
+            groupId={id}
+            groupEvents={events}
+            onEventAdded={fetchEvents}
+          />
+        </div>
         <Tabs defaultValue="proposed" className="mt-10">
           <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b bg-transparent p-0">
             <TabsTrigger

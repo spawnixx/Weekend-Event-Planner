@@ -34,9 +34,19 @@ export default function AddEventModal({ groupId, groupEvents, onEventAdded }) {
 
         <Tabs defaultValue="custom">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="custom">Custom Event</TabsTrigger>
+            <TabsTrigger
+              value="custom"
+              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            >
+              Custom Event
+            </TabsTrigger>
 
-            <TabsTrigger value="ticketmaster">Ticketmaster</TabsTrigger>
+            <TabsTrigger
+              value="ticketmaster"
+              className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+            >
+              Ticketmaster
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="custom" className="mt-6">

@@ -14,8 +14,13 @@ export function AuthProvider({ children }) {
 
         setUser(data);
       } catch (err) {
+        if (err.status === 401) {
+          setUser(null);
+          return;
+        } else {
+          console.error("Unable to load user:", err);
+        }
         console.error(err);
-        setUser(null);
       } finally {
         setLoading(false);
       }

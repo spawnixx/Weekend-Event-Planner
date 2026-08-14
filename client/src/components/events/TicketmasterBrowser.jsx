@@ -91,7 +91,9 @@ export default function TicketmasterBrowser({
   return (
     <section className="space-y-6">
       <div>
-        <h3 className="font-medium">Search Ticketmaster</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Search Ticketmaster
+        </h3>
 
         <p className="text-muted-foreground text-sm">
           Search for concerts, sports, theater, and other events.

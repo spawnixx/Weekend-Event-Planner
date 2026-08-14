@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { eventSchema } from "@/lib/eventSchema";
 import { Button } from "@/components/ui/button";
@@ -12,14 +12,24 @@ import { Input } from "@/components/ui/input";
 
 import { toast } from "sonner";
 import { createEvent } from "@/api/eventApi";
+import DateTimePicker from "@/components/events/DateTimePicker";
 export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
     resolver: zodResolver(eventSchema),
+    defaultValues: {
+      title: "",
+      startDate: undefined,
+      endDate: undefined,
+      location: "",
+      description: "",
+      votingEnds: undefined,
+    },
   });
   const onSubmit = async (values) => {
     const data = await createEvent(groupId, values);
@@ -31,7 +41,7 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
     await onEventCreated(data);
     reset();
   };
-  const submitHandler = handleSubmit(onSubmit);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -40,7 +50,7 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
     >
       <FieldGroup>
         <Field>
-          <FieldLabel>
+          <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Event Title
             <Input {...register("title")} />
           </FieldLabel>
@@ -48,12 +58,23 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
           {errors.title && <FieldError>{errors.title.message}</FieldError>}
         </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           <Field>
-            <FieldLabel>
+            <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Start Date
-              <Input type="datetime-local" {...register("startDate")} />
             </FieldLabel>
+
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <DateTimePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select start date"
+                />
+              )}
+            />
 
             {errors.startDate && (
               <FieldError>{errors.startDate.message}</FieldError>
@@ -61,10 +82,21 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
           </Field>
 
           <Field>
-            <FieldLabel>
+            <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               End Date
-              <Input type="datetime-local" {...register("endDate")} />
             </FieldLabel>
+
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <DateTimePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select end date"
+                />
+              )}
+            />
 
             {errors.endDate && (
               <FieldError>{errors.endDate.message}</FieldError>
@@ -73,7 +105,7 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
         </div>
 
         <Field>
-          <FieldLabel>
+          <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Location
             <Input placeholder="123 Main Street" {...register("location")} />
           </FieldLabel>
@@ -84,7 +116,7 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
         </Field>
 
         <Field>
-          <FieldLabel>
+          <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Description
             <textarea
               rows="4"
@@ -100,10 +132,21 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
         </Field>
 
         <Field>
-          <FieldLabel>
+          <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Voting Ends
-            <Input type="datetime-local" {...register("votingEnds")} />
           </FieldLabel>
+
+          <Controller
+            name="votingEnds"
+            control={control}
+            render={({ field }) => (
+              <DateTimePicker
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Select voting deadline"
+              />
+            )}
+          />
 
           {errors.votingEnds && (
             <FieldError>{errors.votingEnds.message}</FieldError>

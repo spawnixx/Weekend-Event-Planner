@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinGroupSchema } from "@/lib/joinGroupSchema";
@@ -19,11 +20,11 @@ import {
   FieldError,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { joinGroup } from "@/api/groupApi";
 
 function JoinGroupModal({ onGroupChange }) {
   const [open, setOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -36,21 +37,8 @@ function JoinGroupModal({ onGroupChange }) {
   const onSubmit = async (values) => {
     console.log("submitting code:", values);
 
-    const res = await fetch("http://localhost:3001/groups/join", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(values),
-    });
+    await joinGroup(values.inviteCode);
 
-    const data = await res.json();
-    if (!res.ok) {
-      console.log(data.message);
-      toast.error(data.message);
-      return;
-    }
     console.log("Joined group successfully:", data);
     toast.success("Join Group Successful");
     await onGroupChange();
@@ -64,20 +52,23 @@ function JoinGroupModal({ onGroupChange }) {
         <Button variant="outline">Join a Group</Button>
       </DialogTrigger>
       <DialogContent>
-        <form onSubmit={submitHandler}>
+        <form onSubmit={submitHandler} className="space-y-6">
           <DialogHeader>
-            <DialogTitle>Join a group via invite code</DialogTitle>
+            <DialogTitle>Join a group</DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              Enter the invite code shared with you.
+            </p>
           </DialogHeader>
           <FieldGroup>
             <Field>
-              <Label>Invite Code</Label>
+              <FieldLabel>Invite Code</FieldLabel>
               <Input placeholder="ABC123" {...register("inviteCode")} />
               {errors.inviteCode && (
                 <FieldError>{errors.inviteCode.message}</FieldError>
               )}
             </Field>
           </FieldGroup>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>

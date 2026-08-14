@@ -3,9 +3,9 @@ import { z } from "zod";
 export const editEventSchema = z
   .object({
     title: z.string().min(1, "Event title is required"),
-    startDate: z.string().min(1, "Start date is required"),
-    endDate: z.string().min(1, "End date is required"),
-    votingEnds: z.string().min(1, "Voting deadline is required"),
+    startDate: z.date(),
+    endDate: z.date().nullable().optional(),
+    votingEnds: z.date(),
     location: z.string().min(1, "Location is required"),
     description: z
       .string()

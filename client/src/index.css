@@ -166,4 +166,8 @@
   a {
     @apply transition-colors;
   }
+  FieldLabel,
+  label {
+    @apply text-xs font-semibold uppercase tracking-wide text-muted-foreground;
+  }
 }

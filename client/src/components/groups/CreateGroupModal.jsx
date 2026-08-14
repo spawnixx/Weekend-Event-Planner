@@ -64,7 +64,7 @@ function CreateGroupModal({ onGroupChange }) {
         <Button variant="outline">Create New Group</Button>
       </DialogTrigger>
       <DialogContent>
-        <form onSubmit={submitHandler}>
+        <form onSubmit={submitHandler} className="space-y-6">
           <DialogHeader>
             <DialogTitle>Create a new group</DialogTitle>
           </DialogHeader>
@@ -77,7 +77,7 @@ function CreateGroupModal({ onGroupChange }) {
               </FieldLabel>
             </Field>
           </FieldGroup>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>

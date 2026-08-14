@@ -72,7 +72,7 @@ function IdentityForm() {
 
   const submitHandler = handleSubmit(onSubmit);
   return (
-    <form onSubmit={submitHandler} autoComplete="false">
+    <form onSubmit={submitHandler} autoComplete="false" className="space-y-6">
       <FieldGroup>
         <FieldSet>
           <FieldLegend>Update Profile</FieldLegend>
@@ -98,9 +98,11 @@ function IdentityForm() {
             </Field>
           </FieldGroup>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save Changes"}
-          </Button>
+          <div className="mt-6">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         </FieldSet>
       </FieldGroup>
     </form>
