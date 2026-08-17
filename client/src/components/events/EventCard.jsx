@@ -7,7 +7,6 @@ import {
   ChevronDown,
   ChevronUp,
   Clock,
-  MapPin,
   ThumbsDown,
   ThumbsUp,
 } from "lucide-react";
@@ -299,8 +298,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
                   </p>
 
                   <p className="mt-1 flex items-center gap-1 text-[#17171A]">
-                    <MapPin className="h-4 w-4" />
-                    {event.location}
+                    {event.location && <EventMapDialog event={event} />}
                   </p>
                 </div>
               )}

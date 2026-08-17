@@ -39,7 +39,7 @@ function JoinGroupModal({ onGroupChange }) {
 
     await joinGroup(values.inviteCode);
 
-    console.log("Joined group successfully:", data);
+    console.log("Joined group successfully:");
     toast.success("Join Group Successful");
     await onGroupChange();
     reset();

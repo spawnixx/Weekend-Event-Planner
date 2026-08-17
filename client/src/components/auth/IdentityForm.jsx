@@ -17,7 +17,6 @@ import { toast } from "sonner";
 
 import { getCurrentUser, updateCurrentUser } from "@/api/authApi";
 function IdentityForm() {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const {
     register,
@@ -37,7 +36,6 @@ function IdentityForm() {
       try {
         const data = await getCurrentUser();
 
-        setUser(data);
         const profile = data.user ?? data;
 
         reset({
@@ -59,7 +57,6 @@ function IdentityForm() {
 
       console.log("Profile Updated:", data);
       toast.success("Profile Updated!");
-      setUser(data);
       reset(data);
     } catch (err) {
       console.error(err);
@@ -67,7 +64,6 @@ function IdentityForm() {
     }
   };
 
-  /// Change to icon (NTH)
   if (loading) return <p>Loading Profile...</p>;
 
   const submitHandler = handleSubmit(onSubmit);

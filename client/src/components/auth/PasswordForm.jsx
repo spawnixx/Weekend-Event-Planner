@@ -33,7 +33,10 @@ export default function PasswordForm() {
 
   async function onSubmit(values) {
     try {
-      const { confirmPassword, ...passwordData } = values;
+      const passwordData = {
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      };
 
       await updateCurrentUser(passwordData);
 
@@ -58,11 +61,7 @@ export default function PasswordForm() {
           <Field>
             <FieldLabel>Current Password</FieldLabel>
 
-            <Input
-              type="password"
-              autoComplete="current-password"
-              {...register("currentPassword")}
-            />
+            <Input type="password" {...register("currentPassword")} />
 
             {errors.currentPassword && (
               <FieldError>{errors.currentPassword.message}</FieldError>

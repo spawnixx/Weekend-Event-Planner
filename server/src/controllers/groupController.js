@@ -110,21 +110,27 @@ export async function removeMember(req, res, next) {
       throw new ExpressError("You are not a member of this group.", 403);
     }
 
-    const isOwner = currentMember.role === "owner";
+    const isOwner = currentMember?.role === "owner";
 
     if (!isOwner && Number(userId) !== currentUserId) {
-      throw new ExpressError("You can only leave the group yourself.", 403);
+      throw new ExpressError(
+        "Only the group owner can remove other members.",
+        403,
+      );
     }
 
     if (isOwner && Number(userId) === currentUserId) {
       throw new ExpressError("The group owner cannot leave the group.", 400);
     }
 
-    await Group.removeMember(groupId, userId);
+    const removedMember = await Group.removeMember(groupId, userId);
+
+    if (!removedMember) {
+      throw new ExpressError("Member not found in this group.", 404);
+    }
 
     return res.json({
       message: "Member removed",
-      userId: removedMember.user_id,
     });
   } catch (err) {
     return next(err);

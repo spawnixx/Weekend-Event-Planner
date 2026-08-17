@@ -172,24 +172,44 @@ export class Group {
       `
       SELECT
         u.id,
-        u.first_name,
-        u.last_name,
+        u.firstName,
+        u.lastName,
         u.email,
-        gm.role,
-        gm.joined_at
+        gm.role
       FROM group_members AS gm
       JOIN users AS u
         ON u.id = gm.user_id
       WHERE gm.group_id = $1
       ORDER BY
         CASE WHEN gm.role = 'owner' THEN 0 ELSE 1 END,
-        u.first_name,
-        u.last_name
+        u.firstName,
+        u.lastName
     `,
       [groupId],
     );
 
     return result.rows;
+  }
+
+  static async getMember(groupId, userId) {
+    const result = await db.query(
+      `
+    SELECT
+      u.id,
+      u.firstName,
+      u.lastName,
+      u.email,
+      gm.role
+    FROM group_members AS gm
+    JOIN users AS u
+      ON u.id = gm.user_id
+    WHERE gm.group_id = $1
+      AND gm.user_id = $2
+    `,
+      [groupId, userId],
+    );
+
+    return result.rows[0] ?? null;
   }
 
   static async removeMember(groupId, userId) {

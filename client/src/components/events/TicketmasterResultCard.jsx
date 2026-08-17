@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CalendarDays, Check, MapPin, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,12 +56,10 @@ export default function TicketmasterResultCard({
   initiallyAdded,
   onEventAdded,
 }) {
-  const [added, setAdded] = useState(initiallyAdded);
-  const [adding, setAdding] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
 
-  useEffect(() => {
-    setAdded(initiallyAdded);
-  }, [initiallyAdded]);
+  const added = initiallyAdded || justAdded;
+  const [adding, setAdding] = useState(false);
 
   async function handleAddEvent() {
     if (added || adding) return;
@@ -84,7 +82,7 @@ export default function TicketmasterResultCard({
 
       const data = await createEvent(groupId, eventPayload);
 
-      setAdded(true);
+      setJustAdded(true);
       toast.success("Event added to the group");
 
       await onEventAdded?.(data.event);
@@ -92,7 +90,7 @@ export default function TicketmasterResultCard({
       console.error(err);
 
       if (err.status === 409) {
-        setAdded(true);
+        setJustAdded(true);
         toast.info("This event is already in the group");
         return;
       }

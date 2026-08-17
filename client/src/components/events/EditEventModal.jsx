@@ -55,10 +55,6 @@ export default function EditEventModal({ event, onEventChange }) {
     try {
       const data = await updateEvent(event.groupid, event.id, values);
 
-      if (!res.ok) {
-        return;
-      }
-
       toast.success("Event updated");
 
       await onEventChange(data.error);

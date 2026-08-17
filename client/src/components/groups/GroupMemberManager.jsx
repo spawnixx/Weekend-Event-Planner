@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { removeGroupMember, deleteGroup } from "@/api/groupApi";
+import { removeGroupMember } from "@/api/groupApi";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, UserRound, Users, LogOut } from "lucide-react";
+import { Trash2, UserRound, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -32,7 +34,13 @@ function getInitials(member) {
   return `${firstInitial}${lastInitial}`.toUpperCase();
 }
 
-export default function GroupMemberManager({ group, setGroup, members = [] }) {
+export default function GroupMemberManager({
+  group,
+  setGroup,
+  members = [],
+  open,
+  onOpenChange,
+}) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [removingMemberId, setRemovingMemberId] = useState(null);
@@ -86,26 +94,18 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="gap-2">
-          <Users className="h-4 w-4" />
-          Members
-          <span className="font-mono-ui text-xs text-muted-foreground">
-            {members.length}
-          </span>
-        </Button>
-      </PopoverTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md p-0">
+        <DialogHeader className="border-b border-[#E4E4E1] px-4 py-4">
+          <DialogTitle className="font-display text-lg font-semibold">
+            Group members
+          </DialogTitle>
 
-      <PopoverContent align="end" className="w-85 border-[#E4E4E1] p-0">
-        <div className="border-b border-[#E4E4E1] px-4 py-3">
-          <h3 className="font-display text-lg font-semibold">Group members</h3>
-
-          <p className="mt-1 text-xs text-muted-foreground">
+          <DialogDescription>
             {members.length} {members.length === 1 ? "member" : "members"} in
             this group
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
         <div className="max-h-80 overflow-y-auto p-2">
           {members.length === 0 ? (
@@ -234,44 +234,7 @@ export default function GroupMemberManager({ group, setGroup, members = [] }) {
             </AlertDialog>
           </div>
         )}
-        {isOwner && (
-          <div className="border-t border-[#E4E4E1] p-3">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full justify-start gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete Group
-                </Button>
-              </AlertDialogTrigger>
-
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete {group.name}?</AlertDialogTitle>
-
-                  <AlertDialogDescription>
-                    This will permanently delete the group, its events, votes,
-                    and membership data. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    // onClick={handleDeleteGroup}
-                    className="bg-red-600 text-white hover:bg-red-700"
-                  >
-                    Delete Group
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        )}
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }

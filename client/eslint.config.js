@@ -3,26 +3,63 @@ import globals from "globals";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import { defineConfig, globalIgnores } from "eslint/config";
 
-export default defineConfig([
-  globalIgnores(["dist"]),
+export default [
+  {
+    ignores: ["dist"],
+  },
+
+  js.configs.recommended,
+
   {
     files: ["**/*.{js,jsx}"],
+
+    languageOptions: {
+      ecmaVersion: "latest",
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        ecmaFeatures: {
+          jsx: true,
+        },
+        sourceType: "module",
+      },
+    },
+
     plugins: {
       react,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
     },
-    extends: [
-      js.configs.recommended,
-      react.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      globals: globals.browser,
-      parserOptions: { ecmaFeatures: { jsx: true } },
+
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+
+    rules: {
+      ...react.configs.recommended.rules,
+      ...react.configs["jsx-runtime"].rules,
+      ...reactHooks.configs.recommended.rules,
+
+      "react-refresh/only-export-components": [
+        "warn",
+        {
+          allowConstantExport: true,
+        },
+      ],
+
+      "react/prop-types": "off",
+      "react/no-unescaped-entities": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
-]);
+  {
+    files: ["src/components/ui/**/*.{js,jsx}"],
+    rules: {
+      "no-unused-vars": "off",
+      "react-refresh/only-export-components": "off",
+    },
+  },
+];

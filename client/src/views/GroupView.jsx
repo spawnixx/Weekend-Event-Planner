@@ -1,5 +1,5 @@
 import GroupMemberManager from "@/components/groups/GroupMemberManager";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getGroup, deleteGroup } from "@/api/groupApi";
 import { getGroupEvents } from "@/api/eventApi";
 import { useParams, useNavigate } from "react-router-dom";
@@ -18,36 +18,43 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
-
+import { toast } from "sonner";
 import EventSection from "@/components/events/EventSection";
 import { useAuth } from "@/context/AuthContext";
 import AddEventModal from "@/components/events/AddEventModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Trash2 } from "lucide-react";
-
-async function handleDeleteGroup() {
-  try {
-    await deleteGroup(group.id);
-
-    toast.success("Group deleted");
-    navigate("/groups");
-  } catch (err) {
-    console.error(err);
-    toast.error(err.message);
-  }
-}
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Trash2, Settings, Users } from "lucide-react";
 
 function GroupView() {
   const { id } = useParams();
   const [group, setGroup] = useState(null);
   const [events, setEvents] = useState([]);
+  const [membersOpen, setMembersOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  async function handleDeleteGroup() {
+    try {
+      await deleteGroup(group.id);
+
+      toast.success("Group deleted");
+      navigate("/groups");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  }
 
   const currentMember = group?.members?.find(
     (member) => member.id === user?.id,
@@ -61,17 +68,17 @@ function GroupView() {
   );
   const closedEvents = events.filter((event) => event.status === "closed");
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const data = await getGroupEvents(id);
       setEvents(data.events);
     } catch (err) {
       console.error("Failed to load events:", err);
     }
-  };
+  }, [id]);
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   useEffect(() => {
     const fetchGroup = async () => {
@@ -132,15 +139,76 @@ function GroupView() {
                 >
                   {currentMember?.role}
                 </Badge>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Settings className="h-4 w-4" />
+                      Manage Group
+                    </Button>
+                  </DropdownMenuTrigger>
 
-                <span className="text-xs text-muted-foreground">
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem
+                      onSelect={() => setMembersOpen(true)}
+                      className="gap-2"
+                    >
+                      <Users className="h-4 w-4" />
+                      Manage Members
+                    </DropdownMenuItem>
+
+                    {isOwner && (
+                      <DropdownMenuItem
+                        onSelect={() => setDeleteOpen(true)}
+                        className="gap-2 text-red-600 focus:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete Group
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+
+                  <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Delete {group.name}?
+                        </AlertDialogTitle>
+
+                        <AlertDialogDescription>
+                          This will permanently delete the group, its events,
+                          votes, and membership data. This action cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                        <AlertDialogAction
+                          onClick={handleDeleteGroup}
+                          className="bg-red-600 text-white hover:bg-red-700"
+                        >
+                          Delete Group
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </DropdownMenu>
+                <GroupMemberManager
+                  open={membersOpen}
+                  onOpenChange={setMembersOpen}
+                  group={group}
+                  members={group.members}
+                  setGroup={setGroup}
+                />
+                {/* <span className="text-xs text-muted-foreground">
                   <GroupMemberManager
                     group={group}
                     members={group.members}
                     setGroup={setGroup}
                   />
-                </span>
-                {isOwner && (
+                </span> */}
+                {/* {isOwner && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -169,7 +237,7 @@ function GroupView() {
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          // onClick={handleDeleteGroup}
+                          onClick={handleDeleteGroup}
                           className="bg-red-600 text-white hover:bg-red-700"
                         >
                           Delete Group
@@ -177,7 +245,7 @@ function GroupView() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                )}
+                )} */}
               </div>
             </div>
           </div>

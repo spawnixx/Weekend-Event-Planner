@@ -89,7 +89,7 @@ export default function DateTimePicker({
           value={selectedDate ? format(selectedDate, "HH:mm") : ""}
           onChange={handleTimeChange}
           disabled={!selectedDate}
-          className="h-auto w-[92px] border-0 bg-transparent p-0 shadow-none focus-visible:ring-0"
+          className="h-auto w-23 border-0 bg-transparent p-0 shadow-none focus-visible:ring-0"
         />
       </div>
     </div>

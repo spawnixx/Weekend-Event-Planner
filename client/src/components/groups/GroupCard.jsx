@@ -5,7 +5,7 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { ArrowRight, CalendarClock, Plus } from "lucide-react";
+import { ArrowRight, CalendarClock } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -110,7 +110,7 @@ export default function GroupCard({ group }) {
         ) : proposedCount > 0 ? (
           <div className="rounded-lg bg-[#E7F2EF] px-4 py-3">
             <p className="text-sm font-semibold text-[#0F6E5C]">
-              You’re caught up
+              You're caught up
             </p>
 
             <p className="mt-1 text-xs text-[#0F6E5C]/80">
@@ -120,8 +120,6 @@ export default function GroupCard({ group }) {
         ) : (
           <div className="rounded-lg border border-dashed border-[#E4E4E1] px-4 py-3">
             <div className="flex items-center gap-2">
-              <Plus className="h-4 w-4 text-[#E8492C]" />
-
               <p className="text-sm font-semibold">No active events</p>
             </div>
 

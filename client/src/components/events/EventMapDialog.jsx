@@ -50,7 +50,7 @@ export default function EventMapDialog({ event }) {
           <iframe
             title={`Map for ${event.title}`}
             src={embedUrl}
-            className="h-[400px] w-full"
+            className="h-100 w-full"
             loading="lazy"
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"

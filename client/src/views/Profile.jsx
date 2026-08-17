@@ -1,7 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { getAvatarColor } from "@/lib/avatarColors";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import IdentityForm from "@/components/auth/IdentityForm";
 import PasswordForm from "@/components/auth/PasswordForm";
 

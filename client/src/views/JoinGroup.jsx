@@ -8,7 +8,7 @@ function JoinGroup() {
 
   const [group, setGroup] = useState(null);
   const [message, setMessage] = useState(null);
-  const [joining, setJoining] = useState(null);
+  const [joining, setJoining] = useState(false);
 
   const navigate = useNavigate();
 
@@ -98,8 +98,8 @@ function JoinGroup() {
       <h1>You're invited!</h1>
       <h2>{group.name}</h2>
 
-      <Button variant="outline" onClick={handleJoin}>
-        Join Group
+      <Button variant="outline" onClick={handleJoin} disabled={joining}>
+        {joining ? "Joining..." : "Join Group"}
       </Button>
     </div>
   );
