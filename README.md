@@ -220,7 +220,7 @@ Weekender/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-Roadmap
+<h2>Roadmap</h2>
 
 - [x] User registration and authentication
 
@@ -254,7 +254,7 @@ See the [open issues](https://github.com/spawnixx/Weekender/issues) for proposed
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-Contact
+<h2>Contact</h2>
 
 Gabriel Thornburgh
 
@@ -265,15 +265,5 @@ GitHub: github.com/spawnixx
 LinkedIn: linkedin.com/in/gabrielthornburgh
 
 Project: github.com/spawnixx/Weekender
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-Acknowledgments
-
-[Ticketmaster Discovery API](https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/)
-
-shadcn/ui
-
-Lucide
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
