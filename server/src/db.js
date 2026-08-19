@@ -10,6 +10,9 @@ if (process.env.NODE_ENV === "test") {
 if (process.env.NODE_ENV === "e2e") {
   envFile = ".env.e2e";
 }
+if (process.env.NODE_ENV === "dev") {
+  envFile = ".env.dev";
+}
 
 dotenv.config({
   path: envFile,

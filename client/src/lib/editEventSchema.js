@@ -1,18 +1,20 @@
 import { z } from "zod";
 
-export const editEventSchema = z
+const optionalEndDate = z.preprocess((value) => {
+  if (value === "" || value === null || value === undefined) {
+    return null;
+  }
+
+  return value;
+}, z.coerce.date().nullable());
+
+export const proposedEditEventSchema = z
   .object({
     title: z.string().min(1, "Event title is required"),
     startDate: z.coerce.date({
       error: "Start date is required",
     }),
-    endDate: z.preprocess((value) => {
-      if (value === "" || value === null || value === undefined) {
-        return null;
-      }
-
-      return value;
-    }, z.coerce.date().nullable()),
+    endDate: optionalEndDate,
     votingEnds: z.coerce.date({
       error: "Voting Deadline is required",
     }),
@@ -37,3 +39,12 @@ export const editEventSchema = z
     path: ["votingEnds"],
     message: "Voting must end before the event begins",
   });
+
+export const confirmedEditEventSchema = z.object({
+  location: z.string().trim().min(1, "Location is required"),
+  description: z
+    .string()
+    .trim()
+    .min(1, "Description is required")
+    .max(500, "Cannot exceed 500 characters"),
+});

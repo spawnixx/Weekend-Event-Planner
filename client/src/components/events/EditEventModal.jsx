@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editEventSchema } from "@/lib/editEventSchema";
+import {
+  proposedEditEventSchema,
+  confirmedEditEventSchema,
+} from "@/lib/editEventSchema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,6 +30,7 @@ import DateTimePicker from "@/components/events/DateTimePicker";
 export default function EditEventModal({ event, onEventChange }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const isConfirmed = event.status === "confirmed";
+
   const getEditValues = (event) => ({
     title: event.title ?? "",
     startDate: event.startdate ? new Date(event.startdate) : undefined,
@@ -35,6 +39,7 @@ export default function EditEventModal({ event, onEventChange }) {
     description: event.description ?? "",
     votingEnds: event.votingends ? new Date(event.votingends) : undefined,
   });
+
   const {
     register,
     control,
@@ -42,7 +47,9 @@ export default function EditEventModal({ event, onEventChange }) {
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
-    resolver: zodResolver(editEventSchema),
+    resolver: zodResolver(
+      isConfirmed ? confirmedEditEventSchema : proposedEditEventSchema,
+    ),
     defaultValues: getEditValues(event),
   });
 
@@ -52,21 +59,18 @@ export default function EditEventModal({ event, onEventChange }) {
 
   async function onSubmit(values) {
     try {
-      const updates =
-        event.status === "confirmed"
-          ? {
-              startDate: values.startdate,
-              endDate: values.enddate,
-              location: values.location,
-              description: values.description,
-            }
-          : values;
+      const updates = isConfirmed
+        ? {
+            startDate: values.startdate,
+            endDate: values.enddate,
+            location: values.location,
+            description: values.description,
+          }
+        : values;
       const data = await updateEvent(event.groupid, event.id, updates);
 
       toast.success(
-        event.status === "confirmed"
-          ? "Confirmed event details updated"
-          : "Event updated",
+        isConfirmed ? "Confirmed event details updated" : "Event updated",
       );
 
       await onEventChange(data.event);
@@ -82,11 +86,7 @@ export default function EditEventModal({ event, onEventChange }) {
     setDialogOpen(open);
 
     if (!open) {
-      reset({
-        title: event.title ?? "",
-        location: event.location ?? "",
-        description: event.description ?? "",
-      });
+      reset(getEditValues(event));
     }
   }
 
@@ -122,46 +122,50 @@ export default function EditEventModal({ event, onEventChange }) {
                 </div>
               </Field>
             )}
-            <Field className="form-row">
-              <FieldLabel>Start Date</FieldLabel>
-              <div className="space-y-1">
-                <Controller
-                  name="startDate"
-                  control={control}
-                  render={({ field }) => (
-                    <DateTimePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Select start date"
-                    />
-                  )}
-                />
+            {!isConfirmed && (
+              <Field className="form-row">
+                <FieldLabel>Start Date</FieldLabel>
+                <div className="space-y-1">
+                  <Controller
+                    name="startdate"
+                    control={control}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Select start date"
+                      />
+                    )}
+                  />
 
-                {errors.startDate && (
-                  <FieldError>{errors.startDate.message}</FieldError>
-                )}
-              </div>
-            </Field>
-            <Field className="form-row">
-              <FieldLabel>End Date</FieldLabel>
-              <div className="space-y-1">
-                <Controller
-                  name="endDate"
-                  control={control}
-                  render={({ field }) => (
-                    <DateTimePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Select end date"
-                    />
+                  {errors.startDate && (
+                    <FieldError>{errors.startDate.message}</FieldError>
                   )}
-                />
+                </div>
+              </Field>
+            )}
+            {!isConfirmed && (
+              <Field className="form-row">
+                <FieldLabel>End Date</FieldLabel>
+                <div className="space-y-1">
+                  <Controller
+                    name="enddate"
+                    control={control}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Select end date"
+                      />
+                    )}
+                  />
 
-                {errors.endDate && (
-                  <FieldError>{errors.endDate.message}</FieldError>
-                )}
-              </div>
-            </Field>
+                  {errors.endDate && (
+                    <FieldError>{errors.endDate.message}</FieldError>
+                  )}
+                </div>
+              </Field>
+            )}
             <Field className="form-row">
               <FieldLabel>Location</FieldLabel>
               <div className="space-y-1">
@@ -196,7 +200,7 @@ export default function EditEventModal({ event, onEventChange }) {
                 <FieldLabel>Voting Ends</FieldLabel>
                 <div className="space-y-1">
                   <Controller
-                    name="votingEnds"
+                    name="votingends"
                     control={control}
                     render={({ field }) => (
                       <DateTimePicker
