@@ -19,6 +19,10 @@ export function deleteGroup(groupId) {
   });
 }
 
+export function createGroup(groupName) {
+  return apiRequest(`/groups/create`, { method: "POST", body: { groupName } });
+}
+
 export function joinGroup(inviteCode) {
   return apiRequest("/groups/join", {
     method: "POST",

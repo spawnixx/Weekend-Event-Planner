@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { groupSchema } from "@/lib/groupSchema";
-
+import { createGroup } from "@/api/groupApi";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,14 +34,7 @@ function CreateGroupModal({ onGroupChange }) {
     resolver: zodResolver(groupSchema),
   });
   const onSubmit = async (values) => {
-    const res = await fetch("http://localhost:3001/groups/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(values),
-    });
+    const res = await createGroup(values);
 
     const data = await res.json();
 
