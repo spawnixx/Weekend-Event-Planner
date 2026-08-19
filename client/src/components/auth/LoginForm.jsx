@@ -41,11 +41,9 @@ function LoginForm() {
         navigate("/groups");
       }
 
-      console.log("Logged in:", data);
       toast.success("Logged in");
       reset();
     } catch (err) {
-      console.log(err);
       toast.error(err.message);
     }
   };
@@ -55,16 +53,21 @@ function LoginForm() {
       <FieldGroup>
         <FieldSet>
           <Field>
-            <FieldLabel>Email</FieldLabel>
-            <Input placeholder="YourEmail@email.com" {...register("email")} />
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input
+              placeholder="YourEmail@email.com"
+              id="email"
+              {...register("email")}
+            />
             {errors.email && <FieldError>{errors.email.message}</FieldError>}
           </Field>
 
           <Field>
-            <FieldLabel>Password</FieldLabel>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
             <Input
               type="password"
               placeholder="Your Password"
+              id="password"
               {...register("password")}
             />
             {errors.password && (

@@ -79,7 +79,6 @@ export async function joinByInviteCode(req, res, next) {
   try {
     const userId = req.user.id;
     const groupId = req.group.id;
-    console.log(userId, groupId);
     await Group.addMember(groupId, userId);
 
     return res.status(200).json({

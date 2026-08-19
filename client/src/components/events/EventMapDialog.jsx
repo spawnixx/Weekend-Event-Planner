@@ -1,4 +1,4 @@
-import { MapPin, ExternalLink } from "lucide-react";
+import { MapPin, ExternalLink, SquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,12 +38,13 @@ export default function EventMapDialog({ event }) {
         >
           <MapPin className="h-3.5 w-3.5 shrink-0" />
           {event.location}
+          <SquareArrowOutUpRight className="h-3 w-3 shrink-0" />
         </button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="font-display">{event.title}</DialogTitle>
+          <DialogTitle>{event.title}</DialogTitle>
         </DialogHeader>
 
         <div className="overflow-hidden rounded-xl border border-[#E4E4E1]">
@@ -55,17 +56,6 @@ export default function EventMapDialog({ event }) {
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
           />
-        </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">{event.location}</p>
-
-          <Button variant="outline" asChild>
-            <a href={externalMapUrl} target="_blank" rel="noreferrer">
-              Open in Google Maps
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

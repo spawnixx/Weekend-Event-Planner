@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
     try {
       await logoutUser();
     } catch (err) {
-      console.log("Logout failed:", err);
+      console.error("Logout failed:", err);
     } finally {
       localStorage.removeItem("pendingInvite");
       setUser(null);

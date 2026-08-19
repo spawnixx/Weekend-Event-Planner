@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editEventSchema } from "@/lib/editEventSchema";
 import { Button } from "@/components/ui/button";
@@ -22,12 +22,14 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
 import { updateEvent } from "@/api/eventApi";
+import DateTimePicker from "@/components/events/DateTimePicker";
 
 export default function EditEventModal({ event, onEventChange }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const isConfirmed = event.status === "confirmed";
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -53,11 +55,24 @@ export default function EditEventModal({ event, onEventChange }) {
 
   async function onSubmit(values) {
     try {
-      const data = await updateEvent(event.groupid, event.id, values);
+      const updates =
+        event.status === "confirmed"
+          ? {
+              startDate: values.startDate,
+              endDate: values.endDate,
+              location: values.location,
+              description: values.description,
+            }
+          : values;
+      const data = await updateEvent(event.groupid, event.id, updates);
 
-      toast.success("Event updated");
+      toast.success(
+        event.status === "confirmed"
+          ? "Confirmed event details updated"
+          : "Event updated",
+      );
 
-      await onEventChange(data.error);
+      await onEventChange(data.event);
 
       setDialogOpen(false);
     } catch (err) {
@@ -88,75 +103,119 @@ export default function EditEventModal({ event, onEventChange }) {
       </DialogTrigger>
 
       <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          autoComplete="on"
+          className="space-y-6"
+        >
           <DialogHeader>
             <DialogTitle>Edit event</DialogTitle>
           </DialogHeader>
 
           <FieldGroup>
-            <Field id="edit-title">
-              <FieldLabel>
-                Event Title
-                <Input {...register("title")} />
-              </FieldLabel>
-              {errors.title && <FieldError>{errors.title.message}</FieldError>}
+            {!isConfirmed && (
+              <Field className="form-row">
+                <FieldLabel>Event Title</FieldLabel>
+                <div className="space-y-1">
+                  <Input id="title" {...register("title")} />
+
+                  {errors.title && (
+                    <FieldError>{errors.title.message}</FieldError>
+                  )}
+                </div>
+              </Field>
+            )}
+            <Field className="form-row">
+              <FieldLabel>Start Date</FieldLabel>
+              <div className="space-y-1">
+                <Controller
+                  name="startDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DateTimePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select start date"
+                    />
+                  )}
+                />
+
+                {errors.startDate && (
+                  <FieldError>{errors.startDate.message}</FieldError>
+                )}
+              </div>
             </Field>
-            <Field>
-              <FieldLabel>
-                Start Date
-                <Input type="datetime-local" {...register("startDate")} />
-              </FieldLabel>
-              {errors.startDate && (
-                <FieldError>{errors.startDate.message}</FieldError>
-              )}
+            <Field className="form-row">
+              <FieldLabel>End Date</FieldLabel>
+              <div className="space-y-1">
+                <Controller
+                  name="endDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DateTimePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select end date"
+                    />
+                  )}
+                />
+
+                {errors.endDate && (
+                  <FieldError>{errors.endDate.message}</FieldError>
+                )}
+              </div>
             </Field>
-            <Field>
-              <FieldLabel>
-                End Date
-                <Input type="datetime-local" {...register("endDate")} />
-              </FieldLabel>
-              {errors.endDate && (
-                <FieldError>{errors.endDate.message}</FieldError>
-              )}
-            </Field>
-            <Field>
-              <FieldLabel>
-                Location
+            <Field className="form-row">
+              <FieldLabel>Location</FieldLabel>
+              <div className="space-y-1">
                 <Input
                   placeholder="123 Main Street"
                   {...register("location")}
                 />
-              </FieldLabel>
-              {errors.location && (
-                <FieldError>{errors.location.message}</FieldError>
-              )}
+
+                {errors.location && (
+                  <FieldError>{errors.location.message}</FieldError>
+                )}
+              </div>
             </Field>
-            <Field>
-              <FieldLabel>
-                Description
+            <Field className="form-row">
+              <FieldLabel>Description</FieldLabel>
+              <div className="space-y-1">
                 <textarea
                   rows="4"
                   placeholder="Tell your group what to bring, expect, or prepare..."
                   className="border-input bg-background min-h-24 w-full rounded-md border px-3 py-2 text-sm"
                   {...register("description")}
                 />
-              </FieldLabel>
 
-              {errors.description && (
-                <FieldError>{errors.description.message}</FieldError>
-              )}
+                {errors.description && (
+                  <FieldError>{errors.description.message}</FieldError>
+                )}
+              </div>
             </Field>
 
-            <Field>
-              <FieldLabel>
-                Voting Ends
-                <Input type="datetime-local" {...register("votingEnds")} />
-              </FieldLabel>
+            {!isConfirmed && (
+              <Field className="form-row">
+                <FieldLabel>Voting Ends</FieldLabel>
+                <div className="space-y-1">
+                  <Controller
+                    name="votingEnds"
+                    control={control}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Select date to end voting"
+                      />
+                    )}
+                  />
 
-              {errors.votingEnds && (
-                <FieldError>{errors.votingEnds.message}</FieldError>
-              )}
-            </Field>
+                  {errors.votingEnds && (
+                    <FieldError>{errors.votingEnds.message}</FieldError>
+                  )}
+                </div>
+              </Field>
+            )}
           </FieldGroup>
 
           <DialogFooter className="mt-4">

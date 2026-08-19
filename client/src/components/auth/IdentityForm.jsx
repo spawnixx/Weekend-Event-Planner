@@ -44,7 +44,7 @@ function IdentityForm() {
           email: profile.email ?? "",
         });
       } catch (err) {
-        console.log("Failed to load profile", err);
+        console.error("Failed to load profile", err);
       } finally {
         setLoading(false);
       }
@@ -55,7 +55,6 @@ function IdentityForm() {
     try {
       const data = await updateCurrentUser(values);
 
-      console.log("Profile Updated:", data);
       toast.success("Profile Updated!");
       reset(data);
     } catch (err) {
@@ -73,21 +72,23 @@ function IdentityForm() {
         <FieldSet>
           <FieldLegend>Update Profile</FieldLegend>
           <FieldGroup>
-            <Field>
+            <Field className="form-row">
               <FieldLabel>First Name</FieldLabel>
-              <Input {...register("firstName")} />
-              {errors.firstName && (
-                <FieldError>{errors.firstName.message}</FieldError>
-              )}
+              <div>
+                <Input {...register("firstName")} />
+                {errors.firstName && (
+                  <FieldError>{errors.firstName.message}</FieldError>
+                )}
+              </div>
             </Field>
-            <Field>
+            <Field className="form-row">
               <FieldLabel>Last Name</FieldLabel>
               <Input {...register("lastName")} />
               {errors.lastName && (
                 <FieldError>{errors.lastName.message}</FieldError>
               )}
             </Field>
-            <Field>
+            <Field className="form-row">
               <FieldLabel>Email</FieldLabel>
               <Input {...register("email")} />
               {errors.email && <FieldError>{errors.email.message}</FieldError>}

@@ -16,7 +16,7 @@ function Profile() {
     <>
       <main className="mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6">
         <div>
-          <p className="font-mono-ui text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+          <p className=" text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
             Account
           </p>
 

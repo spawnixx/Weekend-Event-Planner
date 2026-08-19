@@ -75,8 +75,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
 
       await onEventChange?.(data.event);
     } catch (err) {
-      console.error(err);
-      toast.error("Unable to connect to the server");
+      toast.error(err.message);
     } finally {
       setVoting(false);
     }
@@ -92,7 +91,6 @@ export default function EventCard({ event, onEventChange, isOwner }) {
       toast.success("Event deleted");
       await onEventChange?.();
     } catch (err) {
-      console.error(err);
       toast.error(err.message);
     }
   }
@@ -124,7 +122,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-start gap-4">
           <div className="flex h-15 w-14 shrink-0 flex-col items-center justify-center rounded-lg border border-[#E4E4E1] bg-[#F1F0EC]">
-            <span className="font-mono-ui text-[9px] font-bold uppercase tracking-wider text-[#E8492C]">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#E8492C]">
               {month}
             </span>
 
@@ -132,7 +130,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
               {day}
             </span>
 
-            <span className="font-mono-ui mt-0.5 text-[8px] uppercase tracking-wide text-[#6B6B66]">
+            <span className=" mt-0.5 text-[8px] uppercase tracking-wide text-[#6B6B66]">
               {weekday}
             </span>
           </div>
@@ -214,15 +212,12 @@ export default function EventCard({ event, onEventChange, isOwner }) {
             </Button>
 
             {votingClosed && (
-              <Badge
-                variant="secondary"
-                className="font-mono-ui text-[10px] uppercase"
-              >
+              <Badge variant="secondary" className=" text-[10px] uppercase">
                 Voting closed
               </Badge>
             )}
             <div>
-              <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+              <p className=" text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
                 Voting ends
               </p>
 
@@ -272,7 +267,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
           <div className="mt-4 space-y-5 border-t border-[#E4E4E1] pt-4">
             <div className="grid gap-4 text-sm sm:grid-cols-2">
               <div>
-                <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+                <p className=" text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
                   Starts
                 </p>
 
@@ -282,7 +277,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
               </div>
 
               <div>
-                <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+                <p className=" text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
                   Ends
                 </p>
 
@@ -293,8 +288,8 @@ export default function EventCard({ event, onEventChange, isOwner }) {
 
               {event.location && (
                 <div>
-                  <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
-                    Location
+                  <p className=" text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+                    Address
                   </p>
 
                   <p className="mt-1 flex items-center gap-1 text-[#17171A]">
@@ -305,7 +300,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
             </div>
 
             <div>
-              <p className="font-mono-ui text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+              <p className=" text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
                 Description
               </p>
 
@@ -316,7 +311,7 @@ export default function EventCard({ event, onEventChange, isOwner }) {
 
             {event.members?.length > 0 && (
               <div>
-                <p className="font-mono-ui mb-2 text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
+                <p className=" mb-2 text-[10px] font-semibold uppercase tracking-wider text-[#6B6B66]">
                   Member votes
                 </p>
 
@@ -330,8 +325,9 @@ export default function EventCard({ event, onEventChange, isOwner }) {
 
             {isOwner && (
               <div className="mt-4 flex gap-2">
-                <EditEventModal event={event} onEventChange={onEventChange} />
-
+                {isOwner && event.status !== "closed" && (
+                  <EditEventModal event={event} onEventChange={onEventChange} />
+                )}
                 <Button
                   variant="outline"
                   onClick={handleDelete}

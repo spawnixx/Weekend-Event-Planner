@@ -107,7 +107,7 @@ function GroupView() {
           </div>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="font-mono-ui mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+              <p className=" mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
                 Group
               </p>
 
@@ -135,7 +135,7 @@ function GroupView() {
                 </AvatarGroup>
                 <Badge
                   variant={isOwner ? "default" : "outline"}
-                  className="font-mono-ui text-[10px] uppercase tracking-wider"
+                  className=" text-[10px] uppercase tracking-wider"
                 >
                   {currentMember?.role}
                 </Badge>
@@ -143,7 +143,7 @@ function GroupView() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2">
                       <Settings className="h-4 w-4" />
-                      Manage Group
+                      Settings
                     </Button>
                   </DropdownMenuTrigger>
 
@@ -153,7 +153,7 @@ function GroupView() {
                       className="gap-2"
                     >
                       <Users className="h-4 w-4" />
-                      Manage Members
+                      {isOwner ? "Manage Members" : "Manage Membership"}
                     </DropdownMenuItem>
 
                     {isOwner && (
@@ -201,51 +201,6 @@ function GroupView() {
                   members={group.members}
                   setGroup={setGroup}
                 />
-                {/* <span className="text-xs text-muted-foreground">
-                  <GroupMemberManager
-                    group={group}
-                    members={group.members}
-                    setGroup={setGroup}
-                  />
-                </span> */}
-                {/* {isOwner && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full justify-start gap-2 text-red-600 hover:bg-red-50 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete Group
-                      </Button>
-                    </AlertDialogTrigger>
-
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Delete {group.name}?
-                        </AlertDialogTitle>
-
-                        <AlertDialogDescription>
-                          This will permanently delete the group, its events,
-                          votes, and membership data. This action cannot be
-                          undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={handleDeleteGroup}
-                          className="bg-red-600 text-white hover:bg-red-700"
-                        >
-                          Delete Group
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )} */}
               </div>
             </div>
           </div>
@@ -264,7 +219,7 @@ function GroupView() {
               className="rounded-none border-b-2 border-transparent px-0 pb-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
               Confirmed
-              <span className="font-mono-ui ml-1 text-xs text-muted-foreground">
+              <span className=" ml-1 text-xs text-muted-foreground">
                 ({confirmedEvents.length})
               </span>
             </TabsTrigger>
@@ -274,7 +229,7 @@ function GroupView() {
               className="rounded-none border-b-2 border-transparent px-0 pb-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
               Proposed
-              <span className="font-mono-ui ml-1 text-xs text-muted-foreground">
+              <span className=" ml-1 text-xs text-muted-foreground">
                 ({proposedEvents.length})
               </span>
             </TabsTrigger>
@@ -284,7 +239,7 @@ function GroupView() {
               className="rounded-none border-b-2 border-transparent px-0 pb-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
             >
               Past & canceled
-              <span className="font-mono-ui ml-1 text-xs text-muted-foreground">
+              <span className=" ml-1 text-xs text-muted-foreground">
                 ({closedEvents.length})
               </span>
             </TabsTrigger>

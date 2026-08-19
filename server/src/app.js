@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL ?? "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -24,8 +24,6 @@ app.use("/users", userRoutes);
 app.use("/groups", groupRoutes);
 app.use("/ticketmaster", ticketmasterRoutes);
 
-app.use(errorHandler);
-
 app.get("/", async (req, res) => {
   const result = await db.query("SELECT NOW()");
 
@@ -33,6 +31,8 @@ app.get("/", async (req, res) => {
     status: "ok",
     dbTime: result.rows[0].now,
   });
+
+  app.use(errorHandler);
 });
 
 export { app };

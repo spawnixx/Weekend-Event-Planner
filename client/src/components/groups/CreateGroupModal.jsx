@@ -34,7 +34,6 @@ function CreateGroupModal({ onGroupChange }) {
     resolver: zodResolver(groupSchema),
   });
   const onSubmit = async (values) => {
-    console.log("submitting:", values);
     const res = await fetch("http://localhost:3001/groups/create", {
       method: "POST",
       headers: {
@@ -47,11 +46,9 @@ function CreateGroupModal({ onGroupChange }) {
     const data = await res.json();
 
     if (!res.ok) {
-      console.log(data.message);
       toast.error(data.message);
       return;
     }
-    console.log("Group created:", data);
     toast.success("Group Created!");
     await onGroupChange();
     reset();
@@ -69,10 +66,14 @@ function CreateGroupModal({ onGroupChange }) {
             <DialogTitle>Create a new group</DialogTitle>
           </DialogHeader>
           <FieldGroup>
-            <Field>
-              <FieldLabel>
+            <Field className="form-row">
+              <FieldLabel htmlFor="groupName">
                 Group Name
-                <Input placeholder="Book Club" {...register("name")} />
+                <Input
+                  placeholder="Book Club"
+                  id="groupName"
+                  {...register("name")}
+                />
                 {errors.name && <FieldError>{errors.name.message}</FieldError>}
               </FieldLabel>
             </Field>

@@ -26,7 +26,7 @@ export default function AuthPage() {
         </div>
 
         <div>
-          <p className="font-mono-ui mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E8492C]">
+          <p className=" mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E8492C]">
             Plan together
           </p>
 
@@ -44,7 +44,7 @@ export default function AuthPage() {
           {["Suggest", "Vote", "Confirm"].map((label, index) => (
             <div
               key={label}
-              className="font-mono-ui flex items-center gap-2 rounded-full border border-[#3A3A38] px-3 py-2 text-[10px] uppercase tracking-wide text-[#D8D8D2]"
+              className=" flex items-center gap-2 rounded-full border border-[#3A3A38] px-3 py-2 text-[10px] uppercase tracking-wide text-[#D8D8D2]"
               style={{
                 transform: `rotate(${(index - 1) * 4}deg)`,
               }}

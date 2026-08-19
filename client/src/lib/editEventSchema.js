@@ -3,9 +3,19 @@ import { z } from "zod";
 export const editEventSchema = z
   .object({
     title: z.string().min(1, "Event title is required"),
-    startDate: z.date(),
-    endDate: z.date().nullable().optional(),
-    votingEnds: z.date(),
+    startDate: z.coerce.date({
+      error: "Start date is required",
+    }),
+    endDate: z.preprocess((value) => {
+      if (value === "" || value === null || value === undefined) {
+        return null;
+      }
+
+      return value;
+    }, z.coerce.date().nullable()),
+    votingEnds: z.coerce.date({
+      error: "Voting Deadline is required",
+    }),
     location: z.string().min(1, "Location is required"),
     description: z
       .string()
@@ -13,11 +23,17 @@ export const editEventSchema = z
       .max(500, "Cannot exceed 500 characters")
       .trim(),
   })
-  .refine((data) => new Date(data.endDate) > new Date(data.startDate), {
-    message: "End Date must be after start date",
-    path: ["endDate"],
-  })
-  .refine((data) => new Date(data.votingEnds) < new Date(data.startDate), {
+  .refine(
+    (data) => {
+      if (!data.endDate) return true;
+      return data.endDate > data.startDate;
+    },
+    {
+      message: "End Date must be after start date",
+      path: ["endDate"],
+    },
+  )
+  .refine((data) => data.votingEnds < data.startDate, {
     path: ["votingEnds"],
     message: "Voting must end before the event begins",
   });

@@ -8,8 +8,8 @@ export function getGroup(groupId) {
   return apiRequest(`/groups/${groupId}`);
 }
 
-export function removeGroupMember(groupId) {
-  return apiRequest(`/groups/${groupId}/leave`, {
+export function removeGroupMember(groupId, userId) {
+  return apiRequest(`/groups/${groupId}/members/${userId}`, {
     method: "DELETE",
   });
 }

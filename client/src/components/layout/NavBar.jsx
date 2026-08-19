@@ -19,25 +19,26 @@ function NavBar() {
     });
   };
   return (
-    <nav className="flex items-center gap-4">
+    <nav className="ml-auto items-center justify-end gap-4 pr-5">
       {user && (
         <span className="text-sm text-muted-foreground">
           Welcome, {user?.firstName || user?.firstname}
         </span>
       )}
-
-      {user ? (
-        <>
-          <Link to="/groups">Groups</Link>
-          <Link to="/profile">Profile</Link>
-          <Button onClick={handleLogout}>Logout</Button>
-        </>
-      ) : (
-        <>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-        </>
-      )}
+      <div className="flex w-full items-center justify-end gap-4 pr-5">
+        {user ? (
+          <>
+            <Link to="/groups">Groups</Link>
+            <Link to="/profile">Profile</Link>
+            <Button onClick={handleLogout}>Logout</Button>
+          </>
+        ) : (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 }

@@ -34,7 +34,6 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
   const onSubmit = async (values) => {
     const data = await createEvent(groupId, values);
 
-    console.log("Event created:", data);
     toast.success("Event Created:", {
       description: data.title,
     });
@@ -49,20 +48,20 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
       className="space-y-6"
     >
       <FieldGroup>
-        <Field>
+        <Field className="form-row">
           <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Event Title
-            <Input {...register("title")} />
           </FieldLabel>
+          <div>
+            <Input {...register("title")} />
 
-          {errors.title && <FieldError>{errors.title.message}</FieldError>}
+            {errors.title && <FieldError>{errors.title.message}</FieldError>}
+          </div>
         </Field>
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field>
-            <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Start Date
-            </FieldLabel>
+          <Field className="form-row">
+            <FieldLabel>Start Date</FieldLabel>
 
             <Controller
               name="startDate"
@@ -81,7 +80,7 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
             )}
           </Field>
 
-          <Field>
+          <Field className="form-row">
             <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               End Date
             </FieldLabel>
@@ -104,34 +103,34 @@ export default function CreateEventForm({ groupId, onEventCreated, onCancel }) {
           </Field>
         </div>
 
-        <Field>
+        <Field className="form-row">
           <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Location
-            <Input placeholder="123 Main Street" {...register("location")} />
           </FieldLabel>
+          <Input placeholder="123 Main Street" {...register("location")} />
 
           {errors.location && (
             <FieldError>{errors.location.message}</FieldError>
           )}
         </Field>
 
-        <Field>
+        <Field className="form-row">
           <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Description
-            <textarea
-              rows="4"
-              className="border-input bg-background min-h-24 w-full rounded-md border px-3 py-2 text-sm"
-              placeholder="Tell the group what to expect..."
-              {...register("description")}
-            />
           </FieldLabel>
+          <textarea
+            rows="4"
+            className="border-input bg-background min-h-24 w-full rounded-md border px-3 py-2 text-sm"
+            placeholder="Tell the group what to expect..."
+            {...register("description")}
+          />
 
           {errors.description && (
             <FieldError>{errors.description.message}</FieldError>
           )}
         </Field>
 
-        <Field>
+        <Field className="form-row">
           <FieldLabel className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Voting Ends
           </FieldLabel>

@@ -9,10 +9,12 @@ export default async function requireGroupOwner(req, res, next) {
     const group = await Group.findById(groupId, userId);
 
     if (!group) {
-      next(new ExpressError("Group not found", 404));
+      return next(new ExpressError("Group not found", 404));
     }
     if (group.owner_id !== userId) {
-      next(new ExpressError("Only the group owner can manage members", 403));
+      return next(
+        new ExpressError("Only the group owner can manage this group", 403),
+      );
     }
     req.group = group;
     return next();

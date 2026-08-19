@@ -35,11 +35,8 @@ function JoinGroupModal({ onGroupChange }) {
   });
 
   const onSubmit = async (values) => {
-    console.log("submitting code:", values);
-
     await joinGroup(values.inviteCode);
 
-    console.log("Joined group successfully:");
     toast.success("Join Group Successful");
     await onGroupChange();
     reset();

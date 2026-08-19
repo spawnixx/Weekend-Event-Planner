@@ -97,8 +97,8 @@ export default function GroupMemberManager({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-0">
         <DialogHeader className="border-b border-[#E4E4E1] px-4 py-4">
-          <DialogTitle className="font-display text-lg font-semibold">
-            Group members
+          <DialogTitle className="text-lg font-semibold">
+            Group Members
           </DialogTitle>
 
           <DialogDescription>

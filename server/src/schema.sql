@@ -25,11 +25,11 @@ CREATE TYPE member_role AS ENUM (
 );
 
 CREATE TABLE group_members (
-  userId INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  groupId INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   role member_role NOT NULL DEFAULT 'member',
   
-  PRIMARY KEY (userId, groupId)
+  PRIMARY KEY (user_id, group_id)
 );
 
 

@@ -58,7 +58,7 @@ export default function PasswordForm() {
         </p>
 
         <FieldGroup>
-          <Field>
+          <Field className="form-row">
             <FieldLabel>Current Password</FieldLabel>
 
             <Input type="password" {...register("currentPassword")} />
@@ -68,7 +68,7 @@ export default function PasswordForm() {
             )}
           </Field>
 
-          <Field>
+          <Field className="form-row">
             <FieldLabel>New Password</FieldLabel>
 
             <Input

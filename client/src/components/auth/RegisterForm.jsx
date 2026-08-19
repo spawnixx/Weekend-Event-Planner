@@ -43,7 +43,6 @@ function RegisterForm() {
       toast.success("Account created", {
         description: `Welcome, ${data.user.firstname}!`,
       });
-      console.log("User Created:", data.user);
       reset();
     } catch (err) {
       console.error(err);
@@ -56,7 +55,7 @@ function RegisterForm() {
       <FieldGroup>
         <FieldSet>
           <FieldGroup>
-            <Field>
+            <Field className="form-row">
               <FieldLabel>First Name</FieldLabel>
               <Input placeholder="John" {...register("firstName")} />
               {errors.firstName && (
@@ -64,7 +63,7 @@ function RegisterForm() {
               )}
             </Field>
 
-            <Field>
+            <Field className="form-row">
               <FieldLabel>Last Name</FieldLabel>
               <Input placeholder="Doe" {...register("lastName")} />
               {errors.lastName && (
@@ -72,7 +71,7 @@ function RegisterForm() {
               )}
             </Field>
 
-            <Field>
+            <Field className="form-row">
               <FieldLabel>Email</FieldLabel>
               <Input placeholder="JohnDoe@email.com" {...register("email")} />
               {errors.email && <FieldError>{errors.email.message}</FieldError>}
@@ -80,7 +79,7 @@ function RegisterForm() {
           </FieldGroup>
 
           <FieldGroup>
-            <Field>
+            <Field className="form-row">
               <FieldLabel>Password</FieldLabel>
               <Input
                 type="password"
@@ -88,7 +87,7 @@ function RegisterForm() {
                 {...register("password")}
               />
             </Field>
-            <Field>
+            <Field className="form-row">
               <FieldLabel>Confirm Password</FieldLabel>
               <Input
                 type="password"

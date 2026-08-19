@@ -20,13 +20,14 @@ import {
 import { validateInviteCode } from "../middleware/validateInviteCode.js";
 import validateEvent from "../middleware/validateEvent.js";
 import requireGroupOwner from "../middleware/requireGroupOwner.js";
+import requireGroupMember from "../middleware/requireGroupMember.js";
 
 const router = express.Router();
 
 router.get("/", tokenAuth, getUserGroups);
 router.get("/invite/:inviteCode", getInvitePreview);
-router.get("/:id/events", tokenAuth, getGroupEvents);
-router.get("/:id/members", tokenAuth, getGroupMembers);
+router.get("/:id/events", tokenAuth, requireGroupMember, getGroupEvents);
+router.get("/:id/members", tokenAuth, requireGroupMember, getGroupMembers);
 router.get("/:id", tokenAuth, getGroup);
 
 router.post("/create", tokenAuth, createGroup);
@@ -37,12 +38,34 @@ router.post(
   validateInviteCode,
   joinByInviteCode,
 );
-router.post("/:id/events", tokenAuth, validateEvent, createEvent);
-router.post("/:groupId/events/:eventId/vote", tokenAuth, voteEvent);
+router.post(
+  "/:id/events",
+  tokenAuth,
+  requireGroupMember,
+  validateEvent,
+  createEvent,
+);
+router.post(
+  "/:groupId/events/:eventId/vote",
+  tokenAuth,
+  requireGroupMember,
+  voteEvent,
+);
 
-router.patch("/:groupId/events/:eventId", tokenAuth, updateEvent);
+router.patch(
+  "/:groupId/events/:eventId",
+  tokenAuth,
+  requireGroupOwner,
+  validateEvent,
+  updateEvent,
+);
 
 router.delete("/:groupId/members/:userId", tokenAuth, removeMember);
-router.delete("/:groupId/events/:eventId", tokenAuth, deleteEvent);
+router.delete(
+  "/:groupId/events/:eventId",
+  tokenAuth,
+  requireGroupOwner,
+  deleteEvent,
+);
 router.delete("/:groupId", tokenAuth, requireGroupOwner, deleteGroup);
 export { router };

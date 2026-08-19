@@ -32,6 +32,7 @@ export default function GroupCard({ group }) {
   return (
     <Card
       role="button"
+      label="group name"
       tabIndex={0}
       onClick={handleOpenGroup}
       onKeyDown={(event) => {
@@ -83,7 +84,7 @@ export default function GroupCard({ group }) {
             )}
           </AvatarGroup>
 
-          <span className="font-mono-ui text-[11px] text-muted-foreground">
+          <span className=" text-[11px] text-muted-foreground">
             {group.member_count ?? members.length}{" "}
             {Number(group.member_count ?? members.length) === 1
               ? "member"
@@ -132,7 +133,7 @@ export default function GroupCard({ group }) {
 
       <CardFooter className="border-t border-[#E4E4E1] pt-4">
         <div className="flex w-full items-center justify-between">
-          <span className="font-mono-ui text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span className=" text-[10px] uppercase tracking-wider text-muted-foreground">
             Invite {group.invite_code}
           </span>
 
