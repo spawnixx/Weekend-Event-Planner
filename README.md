@@ -153,7 +153,7 @@ npm install`
 Create a .env file in the server directory and add the values required by your local configuration.
 
 `DATABASE_URL=postgresql://username:password@localhost:5432/weekender
-SESSION_SECRET=replace_with_a_secure_secret
+JWT_SECRET=replace_with_a_secure_secret
 TICKETMASTER_API_KEY=your_ticketmaster_api_key
 CLIENT_URL=http://localhost:5173
 PORT=3001`
