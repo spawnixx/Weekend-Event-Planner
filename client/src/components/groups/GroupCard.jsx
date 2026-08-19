@@ -1,11 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import { ArrowRight, CalendarClock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalendarClock } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -130,16 +124,6 @@ export default function GroupCard({ group }) {
           </div>
         )}
       </CardContent>
-
-      <CardFooter className="border-t border-[#E4E4E1] pt-4">
-        <div className="flex w-full items-center justify-between">
-          <span className=" text-[10px] uppercase tracking-wider text-muted-foreground">
-            Invite {group.invite_code}
-          </span>
-
-          <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-[#E8492C]" />
-        </div>
-      </CardFooter>
     </Card>
   );
 }

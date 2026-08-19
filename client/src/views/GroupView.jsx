@@ -19,6 +19,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { getAvatarColor } from "@/lib/avatarColors";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -33,7 +40,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Trash2, Settings, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Trash2,
+  Settings,
+  Users,
+  UserPlus,
+  Copy,
+} from "lucide-react";
 
 function GroupView() {
   const { id } = useParams();
@@ -41,6 +55,7 @@ function GroupView() {
   const [events, setEvents] = useState([]);
   const [membersOpen, setMembersOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -115,92 +130,142 @@ function GroupView() {
                 {group.name}
               </h1>
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <AvatarGroup>
-                  {group.members.slice(0, 4).map((member) => (
-                    <Avatar key={member.id}>
-                      <AvatarFallback
-                        className={`${getAvatarColor(member.id)} font-semibold`}
-                      >
-                        {member.firstName[0]}
-                        {member.lastName[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                  ))}
-
-                  {group.members.length > 4 && (
-                    <AvatarGroupCount>
-                      +{group.members.length - 4}
-                    </AvatarGroupCount>
-                  )}
-                </AvatarGroup>
-                <Badge
-                  variant={isOwner ? "default" : "outline"}
-                  className=" text-[10px] uppercase tracking-wider"
-                >
-                  {currentMember?.role}
-                </Badge>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Settings className="h-4 w-4" />
-                      Settings
-                    </Button>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem
-                      onSelect={() => setMembersOpen(true)}
-                      className="gap-2"
-                    >
-                      <Users className="h-4 w-4" />
-                      {isOwner ? "Manage Members" : "Manage Membership"}
-                    </DropdownMenuItem>
-
-                    {isOwner && (
-                      <DropdownMenuItem
-                        onSelect={() => setDeleteOpen(true)}
-                        className="gap-2 text-red-600 focus:text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete Group
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-
-                  <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Delete {group.name}?
-                        </AlertDialogTitle>
-
-                        <AlertDialogDescription>
-                          This will permanently delete the group, its events,
-                          votes, and membership data. This action cannot be
-                          undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-                        <AlertDialogAction
-                          onClick={handleDeleteGroup}
-                          className="bg-red-600 text-white hover:bg-red-700"
+                <div className="flex flex-wrap items-center gap-3">
+                  <AvatarGroup>
+                    {group.members.slice(0, 4).map((member) => (
+                      <Avatar key={member.id}>
+                        <AvatarFallback
+                          className={`${getAvatarColor(member.id)} font-semibold`}
                         >
+                          {member.firstName[0]}
+                          {member.lastName[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+
+                    {group.members.length > 4 && (
+                      <AvatarGroupCount>
+                        +{group.members.length - 4}
+                      </AvatarGroupCount>
+                    )}
+                  </AvatarGroup>
+                  <Badge
+                    variant={isOwner ? "default" : "outline"}
+                    className=" text-[10px] uppercase tracking-wider"
+                  >
+                    {currentMember?.role}
+                  </Badge>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Settings className="h-4 w-4" />
+                        Settings
+                      </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem
+                        onSelect={() => setInviteOpen(true)}
+                        className="gap-2"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        Invite Members
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onSelect={() => setMembersOpen(true)}
+                        className="gap-2"
+                      >
+                        <Users className="h-4 w-4" />
+                        {isOwner ? "Manage Members" : "Manage Membership"}
+                      </DropdownMenuItem>
+
+                      {isOwner && (
+                        <DropdownMenuItem
+                          onSelect={() => setDeleteOpen(true)}
+                          className="gap-2 text-red-600 focus:text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
                           Delete Group
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </DropdownMenu>
-                <GroupMemberManager
-                  open={membersOpen}
-                  onOpenChange={setMembersOpen}
-                  group={group}
-                  members={group.members}
-                  setGroup={setGroup}
-                />
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <GroupMemberManager
+                    open={membersOpen}
+                    onOpenChange={setMembersOpen}
+                    group={group}
+                    members={group.members}
+                    setGroup={setGroup}
+                  />
+                </div>
+
+                <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete {group.name}?</AlertDialogTitle>
+
+                      <AlertDialogDescription>
+                        This will permanently delete the group, its events,
+                        votes, and membership data. This action cannot be
+                        undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                      <AlertDialogAction
+                        onClick={handleDeleteGroup}
+                        className="bg-red-600 text-white hover:bg-red-700"
+                      >
+                        Delete Group
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+                  <DialogContent className="sm:max-w-sm">
+                    <DialogHeader>
+                      <DialogTitle>Invite Members</DialogTitle>
+                      <DialogDescription>
+                        Share this code with someone you want to invite to{" "}
+                        {group.name}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Invite Code
+                      </p>
+
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 rounded-md border bg-muted px-3 py-2 font-mono text-sm tracking-widest">
+                          {group.invite_code?.trim()}
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(
+                              group.invite_code.trim(),
+                            );
+
+                            toast.success("Invite code copied");
+                            setInviteOpen(false);
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </div>
