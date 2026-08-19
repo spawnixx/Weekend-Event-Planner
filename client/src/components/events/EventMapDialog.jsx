@@ -1,5 +1,4 @@
-import { MapPin, ExternalLink, SquareArrowOutUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { MapPin, SquareArrowOutUpRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,9 +24,6 @@ export default function EventMapDialog({ event }) {
   const embedUrl =
     `https://www.google.com/maps/embed/v1/place` +
     `?key=${apiKey}&q=${encodedQuery}`;
-
-  const externalMapUrl =
-    `https://www.google.com/maps/search/?api=1` + `&query=${encodedQuery}`;
 
   return (
     <Dialog>
