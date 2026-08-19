@@ -31,8 +31,6 @@ app.get("/", async (req, res) => {
     status: "ok",
     dbTime: result.rows[0].now,
   });
-
-  app.use(errorHandler);
 });
-
+app.use(errorHandler);
 export { app };

@@ -19,6 +19,7 @@ import {
 } from "../controllers/eventController.js";
 import { validateInviteCode } from "../middleware/validateInviteCode.js";
 import validateEvent from "../middleware/validateEvent.js";
+import validateEventUpdate from "../middleware/validateEventUpdate.js";
 import requireGroupOwner from "../middleware/requireGroupOwner.js";
 import requireGroupMember from "../middleware/requireGroupMember.js";
 
@@ -56,7 +57,7 @@ router.patch(
   "/:groupId/events/:eventId",
   tokenAuth,
   requireGroupOwner,
-  validateEvent,
+  validateEventUpdate,
   updateEvent,
 );
 

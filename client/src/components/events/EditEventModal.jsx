@@ -27,6 +27,14 @@ import DateTimePicker from "@/components/events/DateTimePicker";
 export default function EditEventModal({ event, onEventChange }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const isConfirmed = event.status === "confirmed";
+  const getEditValues = (event) => ({
+    title: event.title ?? "",
+    startDate: event.startdate ? new Date(event.startdate) : undefined,
+    endDate: event.enddate ? new Date(event.enddate) : null,
+    location: event.location ?? "",
+    description: event.description ?? "",
+    votingEnds: event.votingends ? new Date(event.votingends) : undefined,
+  });
   const {
     register,
     control,
@@ -35,22 +43,11 @@ export default function EditEventModal({ event, onEventChange }) {
     reset,
   } = useForm({
     resolver: zodResolver(editEventSchema),
-    defaultValues: {
-      title: event.title ?? "",
-      startDate: event.startDate ?? "",
-      endDate: event.endDate ?? "",
-      location: event.location ?? "",
-      description: event.description ?? "",
-      votingEnds: event.votingEnds ?? "",
-    },
+    defaultValues: getEditValues(event),
   });
 
   useEffect(() => {
-    reset({
-      title: event.title ?? "",
-      location: event.location ?? "",
-      description: event.description ?? "",
-    });
+    reset(getEditValues(event));
   }, [event, reset]);
 
   async function onSubmit(values) {
@@ -58,8 +55,8 @@ export default function EditEventModal({ event, onEventChange }) {
       const updates =
         event.status === "confirmed"
           ? {
-              startDate: values.startDate,
-              endDate: values.endDate,
+              startDate: values.startdate,
+              endDate: values.enddate,
               location: values.location,
               description: values.description,
             }

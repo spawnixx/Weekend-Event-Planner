@@ -245,6 +245,7 @@ export class Event {
 
       LEFT JOIN event_votes ev
         ON ev.eventid = e.id
+        AND ev.userid = gm.user_id
 
       WHERE e.status = 'proposed'
         AND e.votingends <= NOW()

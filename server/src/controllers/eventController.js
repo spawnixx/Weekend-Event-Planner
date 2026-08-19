@@ -78,14 +78,14 @@ export async function voteEvent(req, res, next) {
     const updatedEvent = await Event.findByIdWithMembers(eventId, groupId);
 
     const votesFor = Number(updatedEvent.votes_for);
-    const votesAgainst = Number(updateEvent.vote_against);
+    const votesAgainst = Number(updatedEvent.votes_against);
     const totalVotes = votesFor + votesAgainst;
     const totalMembers = updatedEvent.members.length;
 
     let finalStatus = "proposed";
 
     if (totalVotes === totalMembers) {
-      finalStatus = votesFor / totalMembers >= 0.5 ? "confirmed" : "closed";
+      finalStatus = votesFor / totalMembers >= 0.51 ? "confirmed" : "closed";
 
       await Event.updateStatus(eventId, finalStatus);
     }
