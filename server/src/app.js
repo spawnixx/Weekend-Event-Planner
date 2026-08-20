@@ -10,9 +10,14 @@ import ticketmasterRoutes from "./routes/ticketmasterRoutes.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
