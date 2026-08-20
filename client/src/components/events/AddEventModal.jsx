@@ -27,13 +27,13 @@ export default function AddEventModal({ groupId, groupEvents, onEventAdded }) {
       <DialogTrigger asChild>
         <Button>Add Event</Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
-        <DialogHeader>
+      <DialogContent className=" flex max-h-[90vh] flex-col sm:max-w-4xl">
+        <DialogHeader className="shrink-0">
           <DialogTitle>Add an event</DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="custom">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="custom" className="flex min-h-0 flex-1 flex-col">
+          <TabsList className="grid w-full shrink-0 grid-cols-2">
             <TabsTrigger
               value="custom"
               className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
@@ -48,22 +48,23 @@ export default function AddEventModal({ groupId, groupEvents, onEventAdded }) {
               Ticketmaster
             </TabsTrigger>
           </TabsList>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <TabsContent value="custom" className="mt-6">
+              <CreateEventForm
+                groupId={groupId}
+                onEventCreated={handleCustomEventCreated}
+                onCancel={() => setDialogOpen(false)}
+              />
+            </TabsContent>
 
-          <TabsContent value="custom" className="mt-6">
-            <CreateEventForm
-              groupId={groupId}
-              onEventCreated={handleCustomEventCreated}
-              onCancel={() => setDialogOpen(false)}
-            />
-          </TabsContent>
-
-          <TabsContent value="ticketmaster" className="mt-6">
-            <TicketmasterBrowser
-              groupId={groupId}
-              groupEvents={groupEvents}
-              onEventAdded={handleEventAdded}
-            />
-          </TabsContent>
+            <TabsContent value="ticketmaster" className="mt-6">
+              <TicketmasterBrowser
+                groupId={groupId}
+                groupEvents={groupEvents}
+                onEventAdded={handleEventAdded}
+              />
+            </TabsContent>
+          </div>
         </Tabs>
       </DialogContent>
     </Dialog>

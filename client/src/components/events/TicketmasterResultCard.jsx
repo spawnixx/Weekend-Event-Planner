@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { createEvent } from "@/api/eventApi";
+import EventMapDialog from "./EventMapDialog";
 
 function formatDate(date) {
   if (!date) {
@@ -102,7 +103,7 @@ export default function TicketmasterResultCard({
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="flex h-full flex-col overflow-hidden">
       <div className="aspect-video overflow-hidden bg-muted">
         {event.eventImageUrl ? (
           <img
@@ -119,13 +120,13 @@ export default function TicketmasterResultCard({
 
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
-          <CardTitle className="line-clamp-2">{event.title}</CardTitle>
+          <CardTitle className="line-clamp-2 h-12">{event.title}</CardTitle>
 
           {added && <Badge variant="secondary">Added</Badge>}
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="flex flex-1 flex-col gap-2">
         <div className="flex items-start gap-2 text-sm">
           <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" />
 
@@ -133,14 +134,19 @@ export default function TicketmasterResultCard({
         </div>
 
         <div className="flex items-start gap-2 text-sm">
-          <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-
-          <span>{event.location || "Location unavailable"}</span>
+          {event.location ? (
+            <EventMapDialog event={event} />
+          ) : (
+            <>
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>Location unavailable</span>
+            </>
+          )}
         </div>
 
         {event.description && (
-          <p className="text-muted-foreground line-clamp-3 text-sm">
-            {event.description}
+          <p className="line-clamp-4 min-h-5 text-sm text-muted-foreground">
+            {event.description || "No description available."}
           </p>
         )}
       </CardContent>
