@@ -13,12 +13,16 @@ export function searchTicketmasterEvents({
   keyword,
   city,
   eventDateFrom,
+  classificationName,
   eventDateTo,
   page = 0,
 }) {
   const params = new URLSearchParams({
     page: String(page),
   });
+  if (classificationName) {
+    params.set("classificationName", classificationName);
+  }
 
   if (keyword?.trim()) {
     params.set("keyword", keyword.trim());

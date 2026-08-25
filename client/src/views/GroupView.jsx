@@ -56,8 +56,27 @@ function GroupView() {
   const [membersOpen, setMembersOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const tabTriggerStyles = `
+  rounded-t-md
+  border-b-2
+  border-transparent
+  px-4
+  pb-3
+  pt-2
+  text-muted-foreground
+  transition-colors
+  hover:bg-muted
+  hover:text-foreground
+  data-[state=active]:border-primary
+  data-[state=active]:bg-primary/10
+  data-[state=active]:font-semibold
+  data-[state=active]:text-primary
+  data-[state=active]:shadow-none
+`;
 
   async function handleDeleteGroup() {
     try {
@@ -91,6 +110,15 @@ function GroupView() {
       console.error("Failed to load events:", err);
     }
   }, [id]);
+
+  const handleEventChange = async (changedEvent) => {
+    await fetchEvents();
+
+    if (changedEvent?.status === "confirmed") {
+      setActiveTab("confirmed");
+    }
+  };
+
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
@@ -277,32 +305,29 @@ function GroupView() {
             onEventAdded={fetchEvents}
           />
         </div>
-        <Tabs defaultValue="proposed" className="mt-10">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-10">
           <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b bg-transparent p-0">
-            <TabsTrigger
-              value="confirmed"
-              className="rounded-none border-b-2 border-transparent px-0 pb-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
+            <TabsTrigger value="all" className={tabTriggerStyles}>
+              All Events
+              <span className="ml-1 text-xs text-muted-foreground">
+                ({events.length})
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="confirmed" className={tabTriggerStyles}>
               Confirmed
               <span className=" ml-1 text-xs text-muted-foreground">
                 ({confirmedEvents.length})
               </span>
             </TabsTrigger>
 
-            <TabsTrigger
-              value="proposed"
-              className="rounded-none border-b-2 border-transparent px-0 pb-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
+            <TabsTrigger value="proposed" className={tabTriggerStyles}>
               Proposed
               <span className=" ml-1 text-xs text-muted-foreground">
                 ({proposedEvents.length})
               </span>
             </TabsTrigger>
 
-            <TabsTrigger
-              value="past"
-              className="rounded-none border-b-2 border-transparent px-0 pb-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-            >
+            <TabsTrigger value="past" className={tabTriggerStyles}>
               Past & canceled
               <span className=" ml-1 text-xs text-muted-foreground">
                 ({closedEvents.length})
@@ -310,11 +335,20 @@ function GroupView() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="all" className="mt-5">
+            <EventSection
+              events={events}
+              emptyMessage="No events have been added yet"
+              onEventChange={handleEventChange}
+              isOwner={isOwner}
+            />
+          </TabsContent>
+
           <TabsContent value="confirmed" className="mt-5">
             <EventSection
               events={confirmedEvents}
               emptyMessage="No confirmed events yet."
-              onEventChange={fetchEvents}
+              onEventChange={handleEventChange}
               isOwner={isOwner}
             />
           </TabsContent>
@@ -323,7 +357,7 @@ function GroupView() {
             <EventSection
               events={proposedEvents}
               emptyMessage="No events are open for voting."
-              onEventChange={fetchEvents}
+              onEventChange={handleEventChange}
               isOwner={isOwner}
             />
           </TabsContent>
@@ -332,7 +366,7 @@ function GroupView() {
             <EventSection
               events={closedEvents}
               emptyMessage="No past proposals."
-              onEventChange={fetchEvents}
+              onEventChange={handleEventChange}
               isOwner={isOwner}
             />
           </TabsContent>

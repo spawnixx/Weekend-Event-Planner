@@ -57,14 +57,6 @@ function Profile() {
           <PasswordForm />
         </section>
       </main>
-      {/* lots to include
-        <ProfileWidget>
-        <AccountUpdateForm />
-        <PasswordChangeForm />
-        <WhyDoYouHateMyApp? />(delete button)
-        
-        
-        */}
     </>
   );
 }

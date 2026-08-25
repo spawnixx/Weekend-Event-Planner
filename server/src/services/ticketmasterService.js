@@ -6,7 +6,7 @@ export class TicketmasterService {
   static async searchEvents({
     keyword,
     city,
-    postalCode,
+    classificationName,
     startDateTime,
     endDateTime,
     page = 0,
@@ -29,8 +29,8 @@ export class TicketmasterService {
     if (city) {
       params.set("city", city);
     }
-    if (postalCode) {
-      params.set("postalCode", postalCode);
+    if (classificationName) {
+      params.set("classificationName", classificationName);
     }
     if (startDateTime) {
       params.set("startDateTime", startDateTime);

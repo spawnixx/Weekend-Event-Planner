@@ -59,9 +59,9 @@ export class User {
       `
       SELECT id, firstName, lastName, email, password 
       FROM users
-      WHERE email = $1
+      WHERE LOWER(email) = LOWER($1)
       `,
-      [email],
+      [email.trim()],
     );
     return result.rows[0];
   }

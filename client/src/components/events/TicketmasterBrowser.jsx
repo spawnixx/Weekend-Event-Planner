@@ -22,6 +22,18 @@ export default function TicketmasterBrowser({
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
+  const BROAD_KEYWORDS = {
+    concert: "Music",
+    concerts: "Music",
+    music: "Music",
+    sport: "Sports",
+    sports: "Sports",
+    theater: "Arts & Theatre",
+    theatre: "Arts & Theatre",
+    comedy: "Comedy",
+    family: "Family",
+  };
+
   const addedTicketmasterIds = useMemo(() => {
     return new Set(
       groupEvents
@@ -34,7 +46,12 @@ export default function TicketmasterBrowser({
     const trimmedKeyword = keyword.trim();
     const trimmedCity = city.trim();
 
-    if (!trimmedKeyword && !trimmedCity) {
+    const classificationName =
+      BROAD_KEYWORDS[trimmedKeyword.toLowerCase()] ?? "";
+
+    const eventKeyword = classificationName ? "" : trimmedKeyword;
+
+    if (!eventKeyword && !trimmedKeyword && !trimmedCity) {
       toast.error("Enter a keyword or city");
       return;
     }
@@ -49,8 +66,9 @@ export default function TicketmasterBrowser({
       setLoading(true);
 
       const data = await searchTicketmasterEvents({
-        keyword: trimmedKeyword,
+        keyword: eventKeyword,
         city: trimmedCity,
+        classificationName,
         eventDateFrom,
         eventDateTo,
         page,

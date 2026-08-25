@@ -70,6 +70,8 @@ export async function login(req, res, next) {
       user: {
         id: existingUser.id,
         firstName: existingUser.firstName ?? existingUser.firstname,
+        lastName: existingUser.lastName ?? existingUser.lastname,
+        email: existingUser.email,
       },
     });
   } catch (err) {

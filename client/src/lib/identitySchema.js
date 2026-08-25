@@ -5,5 +5,5 @@ export const identitySchema = z.object({
 
   lastName: z.string().trim().min(1, "Last name is required"),
 
-  email: z.email("Invalid email").trim(),
+  email: z.email("Invalid email").trim().toLowerCase(),
 });

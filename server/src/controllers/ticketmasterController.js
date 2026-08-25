@@ -3,17 +3,23 @@ import { TicketmasterService } from "../services/ticketmasterService.js";
 
 export async function searchTicketmasterEvents(req, res, next) {
   try {
-    const { keyword, city, postalCode, startDateTime, endDateTime, page } =
-      req.query;
+    const {
+      keyword,
+      city,
+      classificationName,
+      startDateTime,
+      endDateTime,
+      page,
+    } = req.query;
 
-    if (!keyword && !city && !postalCode) {
-      throw new ExpressError("Enter a keyword, city, or postal code", 400);
+    if (!keyword && !city) {
+      throw new ExpressError("Enter a keyword and city", 400);
     }
 
     const results = await TicketmasterService.searchEvents({
       keyword: keyword?.trim(),
       city: city?.trim(),
-      postalCode: postalCode?.trim(),
+      classificationName: classificationName?.trim(),
       startDateTime,
       endDateTime,
       page: Number(page) || 0,
